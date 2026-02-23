@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tournaments — BIGWIN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #f5c842;
+      --gold2: #e8a800;
+      --green: #00d68f;
+      --green2: #00b377;
+      --red: #ff4757;
+      --blue: #4e8ef7;
+      --bg: #08091a;
+      --bg2: #0d1128;
+      --bg3: #121835;
+      --card: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.5);
+      --muted2: rgba(255,255,255,0.25);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      padding-bottom: 96px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(102,46,255,0.15) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(0,214,143,0.1) 0%, transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px 16px 0;
+      position: relative; z-index: 1;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      margin-bottom: 14px;
+      animation: slideDown 0.45s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity:0; transform:translateY(-14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .back-btn {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: #fff; font-size: 16px;
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .back-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.12); }
+
+    .header-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 24px; font-weight: 700;
+      background: linear-gradient(90deg, #fff 0%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: 1px; flex: 1; text-align: center;
+    }
+
+    .header-spacer { width: 38px; flex-shrink: 0; }
+
+    /* ─── MY TOURNAMENTS BANNER ─── */
+    .my-btn {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, rgba(102,46,255,0.2), rgba(78,142,247,0.1));
+      border: 1px solid rgba(102,46,255,0.3);
+      border-radius: 18px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      text-decoration: none; color: var(--text);
+      transition: all 0.25s;
+      animation: fadeUp 0.5s 0.05s ease-out both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .my-btn:active { transform: scale(0.98); }
+
+    .my-btn-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, rgba(102,46,255,0.5), rgba(78,142,247,0.3));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    .my-btn-text { flex: 1; }
+    .my-btn-label { font-size: 15px; font-weight: 800; }
+    .my-btn-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .my-btn-arrow { font-size: 18px; color: var(--muted2); }
+
+    /* ─── FILTER TABS ─── */
+    .filters {
+      display: flex; gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+      animation: fadeUp 0.5s 0.1s ease-out both;
+    }
+
+    .filters::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      padding: 9px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      color: var(--muted);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; font-weight: 800;
+      cursor: pointer; white-space: nowrap;
+      transition: all 0.25s;
+      flex-shrink: 0;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-color: transparent;
+      color: #0d1128;
+    }
+
+    /* ─── LIVE COUNT HEADER ─── */
+    .live-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+      animation: fadeUp 0.5s 0.15s ease-out both;
+    }
+
+    .count-text {
+      font-size: 12px; font-weight: 700;
+      color: var(--muted);
+    }
+
+    .live-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,71,87,0.15);
+      border: 1px solid rgba(255,71,87,0.3);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 11px; font-weight: 800;
+      color: var(--red);
+    }
+
+    .live-pulse {
+      width: 6px; height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.4; transform:scale(0.65); }
+    }
+
+    /* ─── TOURNAMENT GRID ─── */
+    .t-grid { display: flex; flex-direction: column; gap: 14px; }
+
+    /* ─── CARD ─── */
+    .t-card {
+      background: var(--bg3);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+    }
+
+    .t-card:active { transform: scale(0.985); }
+
+    /* Full-image banner — no cropping, full 3:2 aspect */
+    .t-banner {
+      width: 100%;
+      aspect-ratio: 3/2;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a1040, #0d1f3c);
+    }
+
+    .t-banner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+    }
+
+    .t-card:hover .t-banner img { transform: scale(1.03); }
+
+    /* Gradient overlay — bottom of image for text readability */
+    .t-banner::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(18,24,53,0.85) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* Badges overlaid on image */
+    .game-badge {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 5px 10px;
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    .status-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 10px; font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    .status-badge.open {
+      background: rgba(0,214,143,0.2);
+      border: 1px solid rgba(0,214,143,0.4);
+      color: var(--green);
+    }
+
+    .status-badge.live {
+      background: rgba(255,71,87,0.2);
+      border: 1px solid rgba(255,71,87,0.4);
+      color: var(--red);
+      animation: pulseBg 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulseBg {
+      0%, 100% { background: rgba(255,71,87,0.2); }
+      50% { background: rgba(255,71,87,0.35); }
+    }
+
+    .status-badge.completed {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--muted);
+    }
+
+    .status-badge.upcoming {
+      background: rgba(78,142,247,0.2);
+      border: 1px solid rgba(78,142,247,0.4);
+      color: var(--blue);
+    }
+
+    /* Slots progress bar on image bottom */
+    .slots-bar-wrap {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      padding: 0 14px 12px;
+    }
+
+    .slots-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .slots-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.7); }
+    .slots-count { font-size: 10px; font-weight: 800; color: #fff; }
+
+    .slots-track {
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .slots-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width 0.6s ease;
+    }
+
+    .slots-fill.full { background: linear-gradient(90deg, var(--gold), var(--red)); }
+
+    /* Placeholder when no image */
+    .t-banner-placeholder {
+      width: 100%;
+      aspect-ratio: 3/2;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 64px;
+      position: relative;
+    }
+
+    /* ─── CARD BODY ─── */
+    .t-body {
+      padding: 16px;
+    }
+
+    .t-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px; font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .t-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-bottom: 14px;
+    }
+
+    .t-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .t-stat-lbl {
+      font-size: 10px; font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      display: block; margin-bottom: 5px;
+    }
+
+    .t-stat-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px; font-weight: 700;
+    }
+
+    .t-stat-val.gold { color: var(--gold); }
+    .t-stat-val.green { color: var(--green); }
+
+    .t-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .t-time {
+      font-size: 11px; font-weight: 700;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 5px;
+    }
+
+    .join-btn {
+      padding: 10px 22px;
+      border-radius: 14px;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .join-btn.open-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #0d1128;
+      box-shadow: 0 4px 14px rgba(245,200,66,0.25);
+    }
+
+    .join-btn.live-btn {
+      background: linear-gradient(135deg, var(--red), #c0392b);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(255,71,87,0.3);
+    }
+
+    .join-btn.view-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--muted);
+    }
+
+    .join-btn:active { transform: scale(0.95); }
+
+    /* ─── SKELETON / LOADING ─── */
+    .skeleton-card {
+      background: var(--bg3);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .skel-banner {
+      width: 100%;
+      aspect-ratio: 3/2;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    .skel-body { padding: 16px; }
+
+    .skel-line {
+      height: 14px; border-radius: 7px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      margin-bottom: 10px;
+    }
+
+    .skel-line.w60 { width: 60%; }
+    .skel-line.w40 { width: 40%; }
+
+    .skel-stats {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px;
+    }
+
+    .skel-stat {
+      height: 56px; border-radius: 14px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    /* ─── EMPTY ─── */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--muted);
+      animation: fadeUp 0.4s ease-out;
+    }
+
+    .empty-state .e-icon { font-size: 52px; margin-bottom: 14px; opacity: 0.35; }
+    .empty-state p { font-size: 14px; font-weight: 700; }
+    .empty-state small { font-size: 12px; color: var(--muted2); margin-top: 4px; display:block; }
+
+    /* ─── BOTTOM NAV ─── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(8,9,26,0.96);
+      backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      padding: 10px 0 14px;
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none; transition: all 0.25s; padding: 6px 0;
+    }
+
+    .nav-item.active { color: var(--gold); }
+    .nav-icon { font-size: 22px; transition: transform 0.25s; }
+    .nav-item.active .nav-icon { transform: scale(1.15); }
+    .nav-label { font-size: 10px; font-weight: 800; letter-spacing: 0.3px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" onclick="history.back()">←</button>
+    <div class="header-title">Tournaments</div>
+    <div class="header-spacer"></div>
+  </div>
+
+  <!-- MY TOURNAMENTS -->
+  <a class="my-btn" href="my-tournaments.html">
+    <div class="my-btn-icon">🥇</div>
+    <div class="my-btn-text">
+      <div class="my-btn-label">My Tournaments</div>
+      <div class="my-btn-sub">View joined & upcoming events</div>
+    </div>
+    <div class="my-btn-arrow">›</div>
+  </a>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" data-filter="open" onclick="setFilter('open',this)">✅ Open</button>
+    <button class="filter-btn" data-filter="live" onclick="setFilter('live',this)">🔴 Live</button>
+    <button class="filter-btn" data-filter="upcoming" onclick="setFilter('upcoming',this)">🕐 Upcoming</button>
+    <button class="filter-btn" data-filter="completed" onclick="setFilter('completed',this)">✓ Completed</button>
+  </div>
+
+  <!-- LIVE HEADER -->
+  <div class="live-header">
+    <div class="count-text" id="countText">Loading…</div>
+    <div class="live-pill" id="livePill" style="display:none">
+      <div class="live-pulse"></div> LIVE
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+    <!-- Skeleton placeholders -->
+    ${[1,2,3].map(() => `
+    <div class="skeleton-card">
+      <div class="skel-banner"></div>
+      <div class="skel-body">
+        <div class="skel-line w60"></div>
+        <div class="skel-stats">
+          <div class="skel-stat"></div><div class="skel-stat"></div><div class="skel-stat"></div>
+        </div>
+        <div class="skel-line w40"></div>
+      </div>
+    </div>`).join('')}
+  </div>
+
+</div><!-- /container -->
+
+<nav class="bottom-nav">
+  <a href="home.html" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+  <a href="tournaments.html" class="nav-item active"><div class="nav-icon">🏆</div><div class="nav-label">Tournaments</div></a>
+  <a href="wallet.html" class="nav-item"><div class="nav-icon">💰</div><div class="nav-label">Wallet</div></a>
+  <a href="profile.html" class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></a>
+</nav>
+
+<script>
+  const API = 'https://color-game-backend1.onrender.com';
+  let allTournaments = [];
+  let currentFilter = 'all';
+
+  // Map game+type → local image
+  function getBannerImg(game, type) {
+    const g = (game || '').toLowerCase();
+    const t = (type || '').toLowerCase();
+    if (g === 'freefire') {
+      if (t === 'duo')   return 'images/ff-br-duo.png';
+      if (t === 'squad') return 'images/ff-br-squad.png';
+      return 'images/ff-br-solo.png';
+    }
+    return null;
+  }
+
+  // Status → config
+  function statusCfg(status) {
+    switch(status) {
+      case 'registration_open':  return { cls:'open',      label:'✓ OPEN',      btnCls:'open-btn',  btnTxt:'Join Now' };
+      case 'upcoming':           return { cls:'upcoming',  label:'🕐 UPCOMING', btnCls:'view-btn',  btnTxt:'View' };
+      case 'ongoing':            return { cls:'live',      label:'🔴 LIVE',     btnCls:'live-btn',  btnTxt:'View Live' };
+      case 'completed':          return { cls:'completed', label:'✓ DONE',      btnCls:'view-btn',  btnTxt:'Results' };
+      default:                   return { cls:'upcoming',  label: status,       btnCls:'view-btn',  btnTxt:'View' };
+    }
+  }
+
+  function renderCard(t) {
+    const img = getBannerImg(t.game, t.type);
+    const cfg = statusCfg(t.status);
+    const used = t.currentParticipants || 0;
+    const total = t.totalSlots || 1;
+    const pct = Math.min(100, Math.round(used / total * 100));
+    const full = pct >= 100;
+    const d = new Date(t.startTime);
+    const timeStr = isNaN(d) ? '—' : d.toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+
+    const bannerHTML = img
+      ? `<img src="${img}" alt="${t.game} ${t.type}" loading="lazy">`
+      : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:72px;background:linear-gradient(135deg,#1a1040,#0d1f3c)">🏆</div>`;
+
+    return `<div class="t-card" onclick="location.href='tournament-details.html?id=${t._id}'">
+      <div class="t-banner">
+        ${bannerHTML}
+        <div class="game-badge">${(t.game||'').toUpperCase()}</div>
+        <div class="status-badge ${cfg.cls}">${cfg.label}</div>
+        <div class="slots-bar-wrap">
+          <div class="slots-row">
+            <span class="slots-label">Slots</span>
+            <span class="slots-count">${used} / ${total}</span>
+          </div>
+          <div class="slots-track">
+            <div class="slots-fill ${full?'full':''}" style="width:${pct}%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="t-body">
+        <div class="t-title">${t.title}</div>
+        <div class="t-stats">
+          <div class="t-stat">
+            <span class="t-stat-lbl">Mode</span>
+            <div class="t-stat-val">${(t.type||'—').toUpperCase()}</div>
+          </div>
+          <div class="t-stat">
+            <span class="t-stat-lbl">Entry</span>
+            <div class="t-stat-val green">₹${t.entryFee||0}</div>
+          </div>
+          <div class="t-stat">
+            <span class="t-stat-lbl">Prize</span>
+            <div class="t-stat-val gold">₹${t.prizePool||0}</div>
+          </div>
+        </div>
+        <div class="t-footer">
+          <div class="t-time">🕐 ${timeStr}</div>
+          <button class="join-btn ${cfg.btnCls}" onclick="event.stopPropagation();location.href='tournament-details.html?id=${t._id}'">${cfg.btnTxt}</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderList(list) {
+    const el = document.getElementById('content');
+    const liveCount = list.filter(t => t.status === 'ongoing').length;
+
+    document.getElementById('countText').textContent = `${list.length} tournament${list.length !== 1 ? 's' : ''}`;
+    const livePill = document.getElementById('livePill');
+    if (liveCount > 0) { livePill.style.display = 'flex'; }
+    else { livePill.style.display = 'none'; }
+
+    if (!list.length) {
+      el.innerHTML = `<div class="empty-state">
+        <div class="e-icon">🏆</div>
+        <p>No tournaments found</p>
+        <small>Check back soon for new events</small>
+      </div>`;
+      return;
+    }
+
+    el.innerHTML = `<div class="t-grid">${list.map(renderCard).join('')}</div>`;
+  }
+
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilter();
+  }
+
+  function applyFilter() {
+    let list = allTournaments;
+    if (currentFilter !== 'all') {
+      list = allTournaments.filter(t => {
+        if (currentFilter === 'open')      return t.status === 'registration_open';
+        if (currentFilter === 'live')      return t.status === 'ongoing';
+        if (currentFilter === 'upcoming')  return t.status === 'upcoming';
+        if (currentFilter === 'completed') return t.status === 'completed';
+        return true;
+      });
+    }
+    renderList(list);
+  }
+
+  async function loadTournaments() {
+    try {
+      const res = await fetch(`${API}/tournaments`, {
+        headers: localStorage.getItem('token') ? { 'Authorization': `Bearer ${localStorage.getItem('token')}` } : {}
+      });
+      const data = await res.json();
+      allTournaments = Array.isArray(data) ? data : (data.tournaments || []);
+      applyFilter();
+    } catch(e) {
+      document.getElementById('content').innerHTML = `<div class="empty-state">
+        <div class="e-icon">⚠️</div>
+        <p>Failed to load tournaments</p>
+        <small>Check your connection and try again</small>
+      </div>`;
+      document.getElementById('countText').textContent = 'Error';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadTournaments();
+    setInterval(loadTournaments, 30000);
+  });
+</script>
+</body>
+</html>

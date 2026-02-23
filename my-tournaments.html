@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>My Tournaments — BIGWIN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #f5c842; --gold2: #e8a800;
+      --green: #00d68f; --green2: #00b377;
+      --red: #ff4757; --blue: #4e8ef7; --purple: #a855f7;
+      --bg: #08091a; --bg3: #121835;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #fff; --muted: rgba(255,255,255,0.5); --muted2: rgba(255,255,255,0.25);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body {
+      font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text);
+      min-height:100vh; padding-bottom:96px; overflow-x:hidden;
+    }
+    body::before {
+      content:''; position:fixed; inset:0;
+      background:
+        radial-gradient(ellipse 80% 55% at 10% 0%, rgba(102,46,255,.15) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 90% 100%, rgba(0,214,143,.1) 0%, transparent 50%);
+      pointer-events:none; z-index:0;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position:sticky; top:0; z-index:50;
+      background:rgba(8,9,26,.92); backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:12px; padding:12px 16px;
+    }
+    .back-btn {
+      width:38px; height:38px; flex-shrink:0;
+      background:rgba(255,255,255,.07); border:1px solid var(--border);
+      border-radius:12px; color:#fff; font-size:16px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; transition:all .2s;
+    }
+    .back-btn:active { transform:scale(.92); }
+    .header-title {
+      font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; flex:1;
+      background:linear-gradient(90deg,#fff 0%,var(--gold) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+
+    /* ── CONTAINER ── */
+    .pg { max-width:520px; margin:0 auto; padding:16px 16px 0; position:relative; z-index:1; }
+
+    /* ── STATS BANNER ── */
+    .stats-row {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+      margin-bottom:14px;
+      animation:fadeUp .5s ease-out both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .stat-box {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:16px; padding:14px 10px; text-align:center;
+    }
+    .stat-icon { font-size:22px; margin-bottom:4px; }
+    .stat-val { font-family:'Rajdhani',sans-serif; font-size:24px; font-weight:700; }
+    .stat-lbl { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin-top:2px; }
+
+    /* ── FILTER TABS ── */
+    .filters {
+      display:flex; gap:8px; margin-bottom:14px;
+      overflow-x:auto; padding-bottom:2px; scrollbar-width:none;
+      animation:fadeUp .5s .06s ease-out both;
+    }
+    .filters::-webkit-scrollbar { display:none; }
+    .filter-btn {
+      padding:9px 16px; border-radius:20px; border:1px solid var(--border);
+      background:var(--card); color:var(--muted);
+      font-family:'Nunito',sans-serif; font-size:12px; font-weight:800;
+      cursor:pointer; white-space:nowrap; transition:all .25s; flex-shrink:0;
+    }
+    .filter-btn.active { background:linear-gradient(135deg,var(--gold),var(--gold2)); border-color:transparent; color:#0d1128; }
+
+    /* ── CARD ── */
+    .reg-card {
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:20px; overflow:hidden; margin-bottom:12px;
+      cursor:pointer; transition:transform .25s;
+      animation:fadeUp .5s .1s ease-out both;
+      position:relative;
+    }
+    .reg-card:active { transform:scale(.985); }
+
+    /* Colored left accent bar */
+    .reg-card::before {
+      content:''; position:absolute; left:0; top:0; bottom:0;
+      width:3px; border-radius:3px 0 0 3px;
+    }
+    .reg-card.status-registered::before   { background:var(--blue); }
+    .reg-card.status-checked_in::before   { background:var(--green); }
+    .reg-card.status-completed::before    { background:var(--gold); }
+    .reg-card.status-disqualified::before { background:var(--red); }
+
+    .card-top {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:14px 14px 0 16px;
+    }
+
+    .card-banner {
+      width:70px; height:70px; border-radius:14px;
+      overflow:hidden; flex-shrink:0;
+      background:linear-gradient(135deg,#1a1040,#0d1f3c);
+    }
+    .card-banner img { width:100%; height:100%; object-fit:cover; }
+    .card-banner-placeholder {
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center; font-size:32px;
+    }
+
+    .card-meta { flex:1; min-width:0; }
+    .card-title {
+      font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px;
+    }
+    .card-game {
+      font-size:11px; font-weight:700; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.8px; margin-bottom:8px;
+    }
+
+    /* Status badge */
+    .s-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      border-radius:20px; padding:4px 10px;
+      font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase;
+    }
+    .s-badge.registered   { background:rgba(78,142,247,.15); border:1px solid rgba(78,142,247,.3); color:var(--blue); }
+    .s-badge.checked_in   { background:rgba(0,214,143,.15); border:1px solid rgba(0,214,143,.3); color:var(--green); }
+    .s-badge.completed    { background:rgba(245,200,66,.15); border:1px solid rgba(245,200,66,.3); color:var(--gold); }
+    .s-badge.disqualified { background:rgba(255,71,87,.15); border:1px solid rgba(255,71,87,.3); color:var(--red); }
+
+    /* Prize won highlight */
+    .prize-banner {
+      margin:12px 14px 0;
+      background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(232,168,0,.05));
+      border:1px solid rgba(245,200,66,.25);
+      border-radius:14px; padding:12px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .prize-lbl { font-size:12px; font-weight:700; color:var(--muted); }
+    .prize-amt { font-family:'Rajdhani',sans-serif; font-size:24px; font-weight:700; color:var(--gold); }
+
+    /* Details grid */
+    .card-details {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:8px; padding:12px 14px;
+    }
+    .detail-row {
+      background:rgba(255,255,255,.04); border-radius:12px;
+      padding:9px 12px;
+    }
+    .detail-key { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+    .detail-val { font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; }
+    .detail-val.green { color:var(--green); }
+    .detail-val.gold  { color:var(--gold); }
+    .detail-val.red   { color:var(--red); }
+
+    /* Card footer */
+    .card-foot {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px 14px;
+      border-top:1px solid rgba(255,255,255,.05);
+    }
+    .foot-time { font-size:11px; font-weight:700; color:var(--muted); }
+
+    .cta-btn {
+      padding:9px 18px; border-radius:12px; border:none;
+      font-family:'Nunito',sans-serif; font-size:12px; font-weight:800;
+      cursor:pointer; transition:all .2s;
+    }
+    .cta-btn:active { transform:scale(.95); }
+    .cta-btn.view     { background:rgba(255,255,255,.08); border:1px solid var(--border); color:#fff; }
+    .cta-btn.checkin  { background:linear-gradient(135deg,var(--green),var(--green2)); color:#fff; box-shadow:0 4px 14px rgba(0,214,143,.25); }
+    .cta-btn.result   { background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#0d1128; box-shadow:0 4px 14px rgba(245,200,66,.25); }
+
+    /* ── EMPTY ── */
+    .empty-state {
+      text-align:center; padding:60px 20px; color:var(--muted);
+      animation:fadeUp .4s ease-out;
+    }
+    .empty-icon { font-size:56px; margin-bottom:14px; opacity:.3; }
+    .empty-title { font-size:16px; font-weight:800; margin-bottom:6px; }
+    .empty-sub { font-size:13px; color:var(--muted2); margin-bottom:24px; }
+    .browse-btn {
+      display:inline-block; padding:14px 28px;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      color:#0d1128; border:none; border-radius:16px;
+      font-family:'Nunito',sans-serif; font-size:14px; font-weight:900;
+      cursor:pointer; box-shadow:0 6px 20px rgba(245,200,66,.25);
+      text-decoration:none;
+    }
+
+    /* Spinner */
+    .spinner { width:32px; height:32px; border:3px solid rgba(255,255,255,.1); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; margin:60px auto; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── Toast ── */
+    .toast {
+      position:fixed; bottom:110px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:#1e2a3a; border:1px solid var(--border);
+      border-radius:14px; padding:12px 20px; font-size:13px; font-weight:700;
+      opacity:0; transition:all .3s; z-index:300; white-space:nowrap; pointer-events:none;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position:fixed; bottom:0; left:0; right:0;
+      background:rgba(8,9,26,.96); backdrop-filter:blur(24px);
+      border-top:1px solid var(--border);
+      display:flex; padding:10px 0 14px; z-index:100;
+    }
+    .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted2); text-decoration:none; transition:all .25s; padding:6px 0; }
+    .nav-item.active { color:var(--gold); }
+    .nav-icon { font-size:22px; transition:transform .25s; }
+    .nav-item.active .nav-icon { transform:scale(1.15); }
+    .nav-label { font-size:10px; font-weight:800; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <div class="header-title">My Tournaments</div>
+</div>
+
+<div class="pg">
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow" style="display:none">
+    <div class="stat-box">
+      <div class="stat-icon">🎮</div>
+      <div class="stat-val" id="statTotal">0</div>
+      <div class="stat-lbl">Joined</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon">🏅</div>
+      <div class="stat-val" id="statWins">0</div>
+      <div class="stat-lbl">Wins</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon">💰</div>
+      <div class="stat-val" id="statPrize">₹0</div>
+      <div class="stat-lbl">Earned</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('registered',this)">🔵 Registered</button>
+    <button class="filter-btn" onclick="setFilter('checked_in',this)">✅ Checked In</button>
+    <button class="filter-btn" onclick="setFilter('completed',this)">🏆 Completed</button>
+  </div>
+
+  <!-- Content -->
+  <div id="content"><div class="spinner"></div></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav class="bottom-nav">
+  <a href="home.html" class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></a>
+  <a href="tournaments.html" class="nav-item active"><div class="nav-icon">🏆</div><div class="nav-label">Tournaments</div></a>
+  <a href="wallet.html" class="nav-item"><div class="nav-icon">💰</div><div class="nav-label">Wallet</div></a>
+  <a href="profile.html" class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></a>
+</nav>
+
+<script>
+const API = 'https://color-game-backend1.onrender.com';
+let allRegs = [], currentFilter = 'all';
+
+if (!localStorage.getItem('token')) location.href = 'index.html';
+
+function getBanner(game, type) {
+  const g = (game||'').toLowerCase(), t = (type||'').toLowerCase();
+  if (g==='freefire') {
+    if (t==='duo')   return 'images/ff-br-duo.png';
+    if (t==='squad') return 'images/ff-br-squad.png';
+    return 'images/ff-br-solo.png';
+  }
+  return null;
+}
+
+function ordinal(n) {
+  if (n===1) return '🥇 1st'; if (n===2) return '🥈 2nd'; if (n===3) return '🥉 3rd';
+  return `#${n}`;
+}
+
+function fmtDate(d) {
+  const dt = new Date(d);
+  return isNaN(dt) ? '—' : dt.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const list = currentFilter === 'all'
+    ? allRegs
+    : allRegs.filter(r => r.status === currentFilter);
+
+  const el = document.getElementById('content');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🎮</div>
+      <div class="empty-title">${currentFilter==='all'?'No tournaments yet':'No ${currentFilter} tournaments'}</div>
+      <div class="empty-sub">Join a tournament to see it here</div>
+      <a class="browse-btn" href="tournaments.html">Browse Tournaments</a>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(r => {
+    const t = r.tournamentId || {};
+    const img = getBanner(t.game, t.type);
+    const now = new Date(), start = new Date(t.startTime);
+    const minsToStart = (start - now) / 60000;
+    const canCheckIn = r.status === 'registered' && minsToStart <= 30 && minsToStart >= -5;
+    const isCompleted = r.status === 'completed';
+
+    let ctaHtml;
+    if (canCheckIn) {
+      ctaHtml = `<button class="cta-btn checkin" onclick="event.stopPropagation();checkIn('${t._id}')">✅ Check In</button>`;
+    } else if (isCompleted && r.finalPosition) {
+      ctaHtml = `<button class="cta-btn result" onclick="event.stopPropagation();location.href='tournament-details.html?id=${t._id}'">🏆 Results</button>`;
+    } else {
+      ctaHtml = `<button class="cta-btn view" onclick="event.stopPropagation();location.href='tournament-details.html?id=${t._id}'">View →</button>`;
+    }
+
+    return `<div class="reg-card status-${r.status}" onclick="location.href='tournament-details.html?id=${t._id}'">
+      <div class="card-top">
+        <div class="card-banner">
+          ${img ? `<img src="${img}" alt="${t.game}">` : `<div class="card-banner-placeholder">🏆</div>`}
+        </div>
+        <div class="card-meta">
+          <div class="card-title">${t.title||'—'}</div>
+          <div class="card-game">${(t.game||'').toUpperCase()} · ${(t.type||'').toUpperCase()}</div>
+          <div class="s-badge ${r.status}">${r.status.replace('_',' ').toUpperCase()}</div>
+        </div>
+      </div>
+
+      ${r.prizeWon > 0 ? `
+      <div class="prize-banner">
+        <div><div class="prize-lbl">Prize Won 🎉</div></div>
+        <div class="prize-amt">₹${r.prizeWon.toFixed(2)}</div>
+      </div>` : ''}
+
+      <div class="card-details">
+        ${r.teamName ? `<div class="detail-row">
+          <div class="detail-key">Team</div>
+          <div class="detail-val">${r.teamName}</div>
+        </div>` : ''}
+        ${r.inGameName ? `<div class="detail-row">
+          <div class="detail-key">IGN</div>
+          <div class="detail-val">${r.inGameName}</div>
+        </div>` : ''}
+        <div class="detail-row">
+          <div class="detail-key">Slot</div>
+          <div class="detail-val">#${r.slotNumber||'—'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-key">Entry Paid</div>
+          <div class="detail-val green">₹${(r.entryFeePaid||0).toFixed(2)}</div>
+        </div>
+        ${r.finalPosition ? `<div class="detail-row">
+          <div class="detail-key">Position</div>
+          <div class="detail-val gold">${ordinal(r.finalPosition)}</div>
+        </div>` : ''}
+        ${r.kills > 0 ? `<div class="detail-row">
+          <div class="detail-key">Kills</div>
+          <div class="detail-val red">💀 ${r.kills}</div>
+        </div>` : ''}
+      </div>
+
+      <div class="card-foot">
+        <div class="foot-time">🕐 ${fmtDate(t.startTime)}</div>
+        ${ctaHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateStats(regs) {
+  const wins = regs.filter(r => r.finalPosition === 1).length;
+  const prize = regs.reduce((sum,r) => sum + (r.prizeWon||0), 0);
+  document.getElementById('statTotal').textContent = regs.length;
+  document.getElementById('statWins').textContent = wins;
+  document.getElementById('statPrize').textContent = '₹'+prize.toFixed(0);
+  document.getElementById('statsRow').style.display = 'grid';
+}
+
+async function checkIn(id) {
+  try {
+    const res = await fetch(`${API}/tournaments/${id}/checkin`, {
+      method:'POST',
+      headers:{ 'Authorization':`Bearer ${localStorage.getItem('token')}`, 'Content-Type':'application/json' }
+    });
+    const d = await res.json();
+    if (res.ok) {
+      toast(`✅ Checked in! Room: ${d.roomId||'—'} | Pass: ${d.roomPassword||'—'}`);
+      load();
+    } else {
+      toast('❌ '+( d.error||'Check-in failed'));
+    }
+  } catch(e) { toast('❌ Network error'); }
+}
+
+async function load() {
+  try {
+    const res = await fetch(`${API}/my-tournaments`, {
+      headers:{ 'Authorization':`Bearer ${localStorage.getItem('token')}` }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error||'Failed');
+    allRegs = data.registrations || [];
+    updateStats(allRegs);
+    renderList();
+  } catch(e) {
+    document.getElementById('content').innerHTML = `<div class="empty-state">
+      <div class="empty-icon">⚠️</div>
+      <div class="empty-title">Could not load</div>
+      <div class="empty-sub">${e.message}</div>
+      <a class="browse-btn" href="tournaments.html">Browse Tournaments</a>
+    </div>`;
+  }
+}
+
+load();
+</script>
+</body>
+</html>

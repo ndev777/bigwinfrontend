@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>BIGWIN — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #f5c842;
+      --gold2: #e8a800;
+      --green: #00d68f;
+      --green2: #00b377;
+      --red: #ff4757;
+      --bg: #08091a;
+      --bg2: #0d1128;
+      --bg3: #121835;
+      --card: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.5);
+      --muted2: rgba(255,255,255,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      padding-bottom: 88px;
+      overflow-x: hidden;
+    }
+
+    /* ─── BG mesh ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(102,46,255,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(0,214,143,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(245,200,66,0.05) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px 16px 0;
+      position: relative; z-index: 1;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(20px);
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { opacity:0; transform:translateY(-16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .logo-wrap { display:flex; align-items:center; gap:10px; }
+
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 16px rgba(245,200,66,0.3);
+    }
+
+    .logo-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 26px; font-weight: 700;
+      background: linear-gradient(90deg, #fff 0%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+
+    .header-user { text-align: right; }
+
+    .user-mobile {
+      font-size: 11px; font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .user-code {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    /* ─── BANNER SLIDER ─── */
+    .banner-wrap {
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      animation: fadeUp 0.6s 0.1s ease-out both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* Full image — 3:2 aspect ratio preserved */
+    .banner-track {
+      display: flex;
+      transition: transform 0.55s cubic-bezier(0.77,0,0.175,1);
+    }
+
+    .banner-slide {
+      min-width: 100%;
+      aspect-ratio: 3/2;
+    }
+
+    .banner-slide img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .banner-dots {
+      position: absolute;
+      bottom: 12px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 6px;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .dot.active {
+      width: 22px;
+      border-radius: 4px;
+      background: var(--gold);
+    }
+
+    /* ─── SOCIAL LINKS ─── */
+    .socials {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+      animation: fadeUp 0.6s 0.2s ease-out both;
+    }
+
+    .social-btn {
+      display: flex; align-items: center; justify-content: center;
+      height: 52px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      font-size: 22px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative; overflow: hidden;
+      text-decoration: none;
+    }
+
+    .social-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .social-btn:active { transform: scale(0.93); }
+
+    .social-btn.tg { border-color: rgba(0,136,204,0.3); }
+    .social-btn.tg::before { background: linear-gradient(135deg,rgba(0,136,204,0.3),transparent); }
+    .social-btn.wa { border-color: rgba(37,211,102,0.3); }
+    .social-btn.wa::before { background: linear-gradient(135deg,rgba(37,211,102,0.3),transparent); }
+    .social-btn.ig { border-color: rgba(214,41,118,0.3); }
+    .social-btn.ig::before { background: linear-gradient(135deg,rgba(214,41,118,0.3),transparent); }
+    .social-btn.yt { border-color: rgba(255,0,0,0.3); }
+    .social-btn.yt::before { background: linear-gradient(135deg,rgba(255,0,0,0.3),transparent); }
+    .social-btn:hover::before { opacity: 1; }
+
+    /* ─── BALANCE CARD ─── */
+    .balance-card {
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(102,46,255,0.18) 0%, rgba(0,214,143,0.08) 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 20px;
+      margin-bottom: 14px;
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.6s 0.25s ease-out both;
+    }
+
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(245,200,66,0.15), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .balance-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .balance-label {
+      font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--muted);
+    }
+
+    .refresh-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:active { transform: rotate(180deg); background: rgba(255,255,255,0.12); }
+
+    .balance-amounts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .amount-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .amount-lbl {
+      font-size: 11px; font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .amount-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px; font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .amount-val span { color: var(--gold); font-size: 18px; }
+
+    .balance-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .bal-btn {
+      padding: 15px;
+      border-radius: 16px;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 800;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.25s;
+      letter-spacing: 0.3px;
+    }
+
+    .bal-btn:active { transform: scale(0.96); }
+
+    .btn-deposit {
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(0,214,143,0.3);
+    }
+
+    .btn-withdraw {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #0d1128;
+      box-shadow: 0 6px 20px rgba(245,200,66,0.25);
+    }
+
+    /* ─── SECTION HEADER ─── */
+    .sec-hdr {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .sec-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .sec-title .dot-accent {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .sec-link {
+      font-size: 12px; font-weight: 700;
+      color: var(--gold);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .sec-link:hover { opacity: 1; }
+
+    /* ─── TOURNAMENT CARDS ─── */
+    .tournaments-wrap {
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s 0.3s ease-out both;
+    }
+
+    .t-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative; overflow: hidden;
+    }
+
+    .t-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--green));
+    }
+
+    .t-card:active { transform: scale(0.985); }
+
+    .t-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .t-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 19px; font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .t-game {
+      font-size: 11px; font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    .t-badge {
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #fff;
+      font-size: 10px; font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .t-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 8px; margin-bottom: 14px;
+    }
+
+    .t-stat {
+      text-align: center;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 10px 6px;
+    }
+
+    .t-stat-lbl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+
+    .t-stat-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px; font-weight: 700;
+      color: #fff;
+    }
+
+    .t-stat-val.gold { color: var(--gold); }
+
+    .t-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .t-time { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+
+    .join-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #0d1128;
+      border: none;
+      border-radius: 12px;
+      padding: 8px 18px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .join-btn:active { transform: scale(0.95); }
+
+    .view-all {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: all 0.25s;
+    }
+
+    .view-all:active { background: rgba(255,255,255,0.08); }
+
+    /* ─── QUICK ACCESS ─── */
+    .quick-wrap {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 10px; margin-bottom: 16px;
+      animation: fadeUp 0.6s 0.35s ease-out both;
+    }
+
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.25s;
+      text-decoration: none; color: var(--text);
+    }
+
+    .q-card:active { transform: scale(0.93); }
+
+    .q-icon {
+      width: 44px; height: 44px;
+      border-radius: 13px;
+      margin: 0 auto 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px;
+    }
+
+    .q-title { font-size: 11px; font-weight: 800; color: #fff; }
+    .q-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── GAMES GRID ─── */
+    .games-wrap {
+      margin-bottom: 16px;
+      animation: fadeUp 0.6s 0.4s ease-out both;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .game-card {
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      background: var(--bg3);
+    }
+
+    .game-card:active { transform: scale(0.96); }
+
+    .game-img-wrap {
+      width: 100%;
+      aspect-ratio: 3/2;
+      overflow: hidden;
+    }
+
+    .game-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+    }
+
+    .game-card:hover .game-img-wrap img { transform: scale(1.04); }
+
+    .game-img-placeholder {
+      width: 100%;
+      aspect-ratio: 3/2;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+      opacity: 0.5;
+    }
+
+    .game-info {
+      padding: 12px 14px;
+    }
+
+    .game-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px; font-weight: 700;
+    }
+
+    .game-live {
+      font-size: 11px; font-weight: 700;
+      color: var(--green);
+      display: flex; align-items: center; gap: 4px;
+      margin-top: 2px;
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .game-soon {
+      font-size: 11px; color: var(--muted2);
+      margin-top: 2px; font-weight: 700;
+    }
+
+    .game-hot-badge {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: linear-gradient(135deg,#ff4757,#c0392b);
+      color: #fff;
+      font-size: 10px; font-weight: 800;
+      padding: 4px 10px; border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .game-card.coming { opacity: 0.55; cursor: default; pointer-events: none; }
+
+    /* ─── BOTTOM NAV ─── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(8,9,26,0.96);
+      backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      padding: 10px 0 14px;
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      color: var(--muted2);
+      text-decoration: none;
+      transition: all 0.25s;
+      padding: 6px 0;
+    }
+
+    .nav-item.active { color: var(--gold); }
+
+    .nav-icon {
+      font-size: 22px;
+      transition: transform 0.25s;
+    }
+
+    .nav-item.active .nav-icon { transform: scale(1.15); }
+
+    .nav-label { font-size: 10px; font-weight: 800; letter-spacing: 0.3px; }
+
+    /* ─── EMPTY/LOADING ─── */
+    .empty-state {
+      text-align: center; padding: 32px 16px;
+      color: var(--muted);
+    }
+
+    .empty-state div { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
+    .empty-state p { font-size: 13px; font-weight: 600; }
+
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 30px auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── NOTICE TICKER ─── */
+    .notice-bar {
+      background: rgba(245,200,66,0.08);
+      border: 1px solid rgba(245,200,66,0.2);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+      overflow: hidden;
+      animation: fadeUp 0.6s 0.15s ease-out both;
+    }
+
+    .notice-icon { font-size: 16px; flex-shrink: 0; }
+
+    .notice-text {
+      font-size: 12px; font-weight: 700;
+      color: rgba(245,200,66,0.9);
+      white-space: nowrap;
+      animation: ticker 18s linear infinite;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-60%); }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-wrap">
+      <div class="logo-icon">🏆</div>
+      <div class="logo-text">BIGWIN</div>
+    </div>
+    <div class="header-user">
+      <div class="user-mobile" id="userMobile">Loading...</div>
+      <div class="user-code" id="userCode">—</div>
+    </div>
+  </div>
+
+  <!-- BANNER SLIDER — full aspect ratio, no cropping -->
+  <div class="banner-wrap">
+    <div class="banner-track" id="bannerTrack">
+      <div class="banner-slide"><img src="images/banner-slide slide-1.png" alt="Banner 1" loading="eager"></div>
+      <div class="banner-slide"><img src="images/banner-slide slide-2.png" alt="Banner 2"></div>
+      <div class="banner-slide"><img src="images/banner-slide slide-3.png" alt="Banner 3"></div>
+      <div class="banner-slide"><img src="images/banner-slide slide-4.png" alt="Banner 4"></div>
+    </div>
+    <div class="banner-dots" id="bannerDots">
+      <button class="dot active" onclick="goToSlide(0)"></button>
+      <button class="dot" onclick="goToSlide(1)"></button>
+      <button class="dot" onclick="goToSlide(2)"></button>
+      <button class="dot" onclick="goToSlide(3)"></button>
+    </div>
+  </div>
+
+  <!-- NOTICE BAR -->
+  <div class="notice-bar">
+    <span class="notice-icon">📢</span>
+    <div class="notice-text">🎉 Welcome to BIGWIN! &nbsp;•&nbsp; Minimum deposit ₹50 &nbsp;•&nbsp; Instant withdrawals 24/7 &nbsp;•&nbsp; Join tournaments & win big! &nbsp;•&nbsp; New tournaments added daily 🏆</div>
+  </div>
+
+  <!-- SOCIAL LINKS -->
+  <div class="socials">
+    <a class="social-btn tg" href="https://t.me/BigwinOfficialVip1" target="_blank">📱</a>
+    <a class="social-btn wa" href="https://wa.me/YOUR_NUMBER" target="_blank">💬</a>
+    <a class="social-btn ig" href="https://instagram.com/bigwin77" target="_blank">📸</a>
+    <a class="social-btn yt" href="https://youtube.com/@bigwin77" target="_blank">▶️</a>
+  </div>
+
+  <!-- BALANCE CARD -->
+  <div class="balance-card">
+    <div class="balance-top">
+      <div class="balance-label">My Balance</div>
+      <button class="refresh-btn" onclick="loadUserProfile()">↻</button>
+    </div>
+    <div class="balance-amounts">
+      <div class="amount-box">
+        <div class="amount-lbl">Wallet</div>
+        <div class="amount-val"><span>₹</span><span id="walletBal">0.00</span></div>
+      </div>
+      <div class="amount-box">
+        <div class="amount-lbl">Bonus</div>
+        <div class="amount-val"><span>₹</span><span id="bonusBal">0.00</span></div>
+      </div>
+    </div>
+    <div class="balance-btns">
+      <button class="bal-btn btn-deposit" onclick="location.href='deposit.html'">＋ Deposit</button>
+      <button class="bal-btn btn-withdraw" onclick="location.href='withdraw.html'">↑ Withdraw</button>
+    </div>
+  </div>
+
+  <!-- FEATURED TOURNAMENTS -->
+  <div class="tournaments-wrap">
+    <div class="sec-hdr">
+      <div class="sec-title"><div class="dot-accent"></div>Tournaments</div>
+      <a class="sec-link" href="tournaments.html">View All →</a>
+    </div>
+    <div id="tournamentsContainer"><div class="spinner"></div></div>
+  </div>
+
+  <!-- QUICK ACCESS -->
+  <div class="quick-wrap">
+    <a class="q-card" href="referral.html">
+      <div class="q-icon" style="background:linear-gradient(135deg,rgba(102,46,255,0.3),rgba(102,46,255,0.1));border:1px solid rgba(102,46,255,0.3)">👥</div>
+      <div class="q-title">Referral</div>
+      <div class="q-sub">Invite & Earn</div>
+    </a>
+    <a class="q-card" href="Giftcodes.html">
+      <div class="q-icon" style="background:linear-gradient(135deg,rgba(0,214,143,0.3),rgba(0,214,143,0.1));border:1px solid rgba(0,214,143,0.3)">🎁</div>
+      <div class="q-title">Gift Codes</div>
+      <div class="q-sub">Redeem Now</div>
+    </a>
+    <a class="q-card" href="wallet-history.html">
+      <div class="q-icon" style="background:linear-gradient(135deg,rgba(245,200,66,0.3),rgba(245,200,66,0.1));border:1px solid rgba(245,200,66,0.3)">📜</div>
+      <div class="q-title">History</div>
+      <div class="q-sub">Transactions</div>
+    </a>
+    <a class="q-card" href="my-tournaments.html">
+      <div class="q-icon" style="background:linear-gradient(135deg,rgba(255,71,87,0.3),rgba(255,71,87,0.1));border:1px solid rgba(255,71,87,0.3)">🥇</div>
+      <div class="q-title">My Events</div>
+      <div class="q-sub">Joined</div>
+    </a>
+  </div>
+
+  <!-- GAMES SECTION -->
+  <div class="games-wrap">
+    <div class="sec-hdr">
+      <div class="sec-title"><div class="dot-accent"></div>Play Games</div>
+    </div>
+    <div class="games-grid">
+      <div class="game-card" onclick="location.href='game.html'">
+        <div class="game-img-wrap">
+          <img src="images/color-game.png" alt="Color Game">
+        </div>
+        <div class="game-hot-badge">🔥 HOT</div>
+        <div class="game-info">
+          <div class="game-name">Color Game</div>
+          <div class="game-live"><div class="live-dot"></div> Live Now</div>
+        </div>
+      </div>
+      <div class="game-card coming">
+        <div class="game-img-placeholder">🎯</div>
+        <div class="game-info">
+          <div class="game-name">Dice Game</div>
+          <div class="game-soon">Coming Soon</div>
+        </div>
+      </div>
+      <div class="game-card coming">
+        <div class="game-img-placeholder">🃏</div>
+        <div class="game-info">
+          <div class="game-name">Card Game</div>
+          <div class="game-soon">Coming Soon</div>
+        </div>
+      </div>
+      <div class="game-card coming">
+        <div class="game-img-placeholder">🎰</div>
+        <div class="game-info">
+          <div class="game-name">Slots</div>
+          <div class="game-soon">Coming Soon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="home.html" class="nav-item active">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Home</div>
+  </a>
+  <a href="tournaments.html" class="nav-item">
+    <div class="nav-icon">🏆</div>
+    <div class="nav-label">Tournaments</div>
+  </a>
+  <a href="wallet.html" class="nav-item">
+    <div class="nav-icon">💰</div>
+    <div class="nav-label">Wallet</div>
+  </a>
+  <a href="profile.html" class="nav-item">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Profile</div>
+  </a>
+</nav>
+
+<script>
+  const API = 'https://color-game-backend1.onrender.com';
+  let slide = 0, timer;
+  const SLIDES = 4;
+
+  if (!localStorage.getItem('token')) location.href = 'index.html';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadUserProfile();
+    loadFeaturedTournaments();
+    startSlider();
+  });
+
+  // ─── SLIDER ───
+  function startSlider() {
+    clearInterval(timer);
+    timer = setInterval(() => goToSlide((slide + 1) % SLIDES), 3500);
+  }
+
+  function goToSlide(i) {
+    slide = i;
+    document.getElementById('bannerTrack').style.transform = `translateX(-${i * 100}%)`;
+    document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    startSlider();
+  }
+
+  // ─── PROFILE ───
+  async function loadUserProfile() {
+    try {
+      const res = await fetch(`${API}/profile`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      if (!res.ok) return;
+      const d = await res.json();
+      document.getElementById('userMobile').textContent = d.mobile || '—';
+      document.getElementById('userCode').textContent = d.referralCode || d.userCode || '—';
+      document.getElementById('walletBal').textContent = (d.wallet || 0).toFixed(2);
+      document.getElementById('bonusBal').textContent = (d.bonus || 0).toFixed(2);
+    } catch(e) {}
+  }
+
+  // ─── TOURNAMENTS ───
+  async function loadFeaturedTournaments() {
+    try {
+      const res = await fetch(`${API}/tournaments?status=registration_open`);
+      const data = await res.json();
+      const list = Array.isArray(data) ? data : (data.tournaments || []);
+      const el = document.getElementById('tournamentsContainer');
+
+      if (!list.length) {
+        el.innerHTML = '<div class="empty-state"><div>🏆</div><p>No open tournaments right now</p></div>';
+        return;
+      }
+
+      el.innerHTML = list.slice(0,3).map(t => {
+        const d = new Date(t.startTime);
+        const timeStr = isNaN(d) ? '—' : d.toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+        const slots = `${t.currentParticipants||0}/${t.totalSlots||'∞'}`;
+        return `<div class="t-card" onclick="location.href='tournament-details.html?id=${t._id}'">
+          <div class="t-top">
+            <div>
+              <div class="t-name">${t.title}</div>
+              <div class="t-game">${t.game || ''} ${t.type ? '· '+t.type : ''}</div>
+            </div>
+            <div class="t-badge">✓ OPEN</div>
+          </div>
+          <div class="t-stats">
+            <div class="t-stat">
+              <div class="t-stat-lbl">Entry</div>
+              <div class="t-stat-val">₹${t.entryFee||0}</div>
+            </div>
+            <div class="t-stat">
+              <div class="t-stat-lbl">Prize Pool</div>
+              <div class="t-stat-val gold">₹${t.prizePool||0}</div>
+            </div>
+            <div class="t-stat">
+              <div class="t-stat-lbl">Slots</div>
+              <div class="t-stat-val">${slots}</div>
+            </div>
+          </div>
+          <div class="t-bottom">
+            <div class="t-time">🕐 ${timeStr}</div>
+            <button class="join-btn">Join Now</button>
+          </div>
+        </div>`;
+      }).join('') + `<button class="view-all" onclick="location.href='tournaments.html'">View All Tournaments</button>`;
+    } catch(e) {
+      document.getElementById('tournamentsContainer').innerHTML =
+        '<div class="empty-state"><div>⚠️</div><p>Could not load tournaments</p></div>';
+    }
+  }
+</script>
+</body>
+</html>
