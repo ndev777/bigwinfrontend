@@ -325,23 +325,16 @@
     </div>
   </div>
 
-  <!-- PAYMENT METHODS -->
-  <div class="sec pay-sec">
-    <div class="sec-label">Payment Method</div>
-    <div class="pay-grid">
-      <div class="pay-card sel" id="payUPI" onclick="selPay('upi')">
-        <div class="pay-icon">📱</div>
-        <div class="pay-name">UPI</div>
-      </div>
-      <div class="pay-card" id="payCard" onclick="selPay('card')">
-        <div class="pay-icon">💳</div>
-        <div class="pay-name">Cards</div>
-      </div>
-      <div class="pay-card" id="payNet" onclick="selPay('net')">
-        <div class="pay-icon">🏦</div>
-        <div class="pay-name">Net Banking</div>
-      </div>
+  <!-- PAYMENT METHODS INFO (Cashfree handles actual selection) -->
+  <div class="sec pay-sec" style="padding:14px 18px">
+    <div class="sec-label" style="margin-bottom:8px">Accepted Payments</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--muted)"><span style="font-size:18px">📱</span>UPI</div>
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--muted)"><span style="font-size:18px">💳</span>Cards</div>
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--muted)"><span style="font-size:18px">🏦</span>Net Banking</div>
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--muted)"><span style="font-size:18px">📲</span>Wallets</div>
     </div>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted2);font-weight:700">You'll choose your payment method on Cashfree's secure checkout page</div>
   </div>
 
   <!-- TRUST STRIP -->
@@ -400,7 +393,6 @@ if (!localStorage.getItem('token')) location.href = 'index.html';
 
 const BONUS_RATE = 0.20; // 20% on first deposit
 let isFirstDeposit = true; // assume true; backend will validate anyway
-let selectedPay = 'upi';
 
 // ── Balance ──
 async function loadBalance() {
@@ -451,14 +443,6 @@ function onAmtChange() {
   });
 }
 
-// ── Payment method ──
-function selPay(m) {
-  selectedPay = m;
-  ['upi','card','net'].forEach(k => document.getElementById('pay'+k.charAt(0).toUpperCase()+k.slice(1))?.classList.remove('sel'));
-  const map = { upi:'payUPI', card:'payCard', net:'payNet' };
-  document.getElementById(map[m])?.classList.add('sel');
-}
-
 // ── Toast ──
 function toast(msg, type='ok') {
   const el = document.getElementById('toast');
@@ -467,26 +451,40 @@ function toast(msg, type='ok') {
 }
 
 // ── Deposit ──
+async function createOrder(amount, useManual) {
+  const endpoint = useManual
+    ? `${API}/api/cashfree/create-order-manual`
+    : `${API}/api/cashfree/create-order`;
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
+    body: JSON.stringify({ amount })
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.message || data.error || 'Order creation failed');
+  if (!data.payment_session_id) throw new Error('No payment session received. Please try again.');
+  return data;
+}
+
 async function handleDeposit() {
   const amount = parseInt(document.getElementById('amtInput').value);
-  if (!amount || amount < 10)   { toast('⚠️ Minimum deposit is ₹10', 'err'); return; }
-  if (amount > 100000)           { toast('⚠️ Maximum deposit is ₹1,00,000', 'err'); return; }
+  if (!amount || amount < 10)  { toast('⚠️ Minimum deposit is ₹10', 'err'); return; }
+  if (amount > 100000)          { toast('⚠️ Maximum deposit is ₹1,00,000', 'err'); return; }
 
   const btn = document.getElementById('depBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span style="border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:18px;height:18px;animation:spin .7s linear infinite;display:inline-block"></span>&nbsp;Processing…';
+  btn.innerHTML = '<span style="border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;width:18px;height:18px;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle"></span>&nbsp; Connecting…';
   document.getElementById('loadOv').classList.add('show');
 
+  let data;
   try {
-    const res = await fetch(`${API}/api/cashfree/create-order`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${localStorage.getItem('token')}` },
-      body: JSON.stringify({ amount })
-    });
-    const data = await res.json();
-
-    if (!res.ok || !data.success) throw new Error(data.message || data.error || 'Order creation failed');
-    if (!data.payment_session_id) throw new Error('Payment session not created. Please try again.');
+    // Try SDK endpoint first, fall back to manual axios endpoint
+    try {
+      data = await createOrder(amount, false);
+    } catch(e) {
+      console.warn('SDK endpoint failed, trying manual…', e.message);
+      data = await createOrder(amount, true);
+    }
 
     const cashfree = Cashfree({ mode: 'production' });
     cashfree.checkout({
@@ -494,7 +492,7 @@ async function handleDeposit() {
       redirectTarget: '_self',
       returnUrl: `${window.location.origin}/deposit-success.html?order_id=${data.orderId}`
     });
-    // Page will redirect — no need to reset
+    // Will redirect — no reset needed
 
   } catch(err) {
     document.getElementById('loadOv').classList.remove('show');
@@ -502,11 +500,14 @@ async function handleDeposit() {
     btn.innerHTML = '<span>💰</span> Deposit Now';
 
     let msg = err.message || 'Network error. Please try again.';
-    if (msg.includes('token') || msg.includes('auth')) {
+    if (msg.toLowerCase().includes('auth') || msg.toLowerCase().includes('token')) {
       msg = 'Session expired. Please login again.';
       setTimeout(()=>{ localStorage.removeItem('token'); location.href='index.html'; }, 2000);
+    } else if (msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('400')) {
+      msg = 'Payment gateway configuration error. Please contact support.';
     }
     toast('❌ '+msg, 'err');
+    console.error('Deposit error:', err);
   }
 }
 
