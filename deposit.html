@@ -461,7 +461,11 @@ async function createOrder(amount, useManual) {
     body: JSON.stringify({ amount })
   });
   const data = await res.json();
-  if (!res.ok || !data.success) throw new Error(data.message || data.error || 'Order creation failed');
+  if (!res.ok || !data.success) {
+    // Extract real error from server
+    const realMsg = data.error?.message || data.error || data.message || 'Order creation failed';
+    throw new Error(realMsg);
+  }
   if (!data.payment_session_id) throw new Error('No payment session received. Please try again.');
   return data;
 }
@@ -503,10 +507,12 @@ async function handleDeposit() {
     if (msg.toLowerCase().includes('auth') || msg.toLowerCase().includes('token')) {
       msg = 'Session expired. Please login again.';
       setTimeout(()=>{ localStorage.removeItem('token'); location.href='index.html'; }, 2000);
-    } else if (msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('400')) {
-      msg = 'Payment gateway configuration error. Please contact support.';
+    } else if (msg.toLowerCase().includes('credential') || msg.toLowerCase().includes('missing')) {
+      msg = 'Payment gateway not configured. Contact support.';
     }
     toast('❌ '+msg, 'err');
+    
+    // Show detailed error in console for debugging
     console.error('Deposit error:', err);
   }
 }
