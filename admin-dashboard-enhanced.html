@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIGWIN — Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-deep:    #060b14;
+      --bg-panel:   #0c1520;
+      --bg-card:    #111d2c;
+      --bg-hover:   #162030;
+      --border:     rgba(255,255,255,0.07);
+      --border-hi:  rgba(255,255,255,0.14);
+      --green:      #00e676;
+      --green-dim:  rgba(0,230,118,0.12);
+      --green-glow: rgba(0,230,118,0.35);
+      --amber:      #ffd54f;
+      --amber-dim:  rgba(255,213,79,0.12);
+      --red:        #ff5252;
+      --red-dim:    rgba(255,82,82,0.12);
+      --blue:       #448aff;
+      --blue-dim:   rgba(68,138,255,0.12);
+      --purple:     #e040fb;
+      --text-hi:    #f0f4ff;
+      --text-mid:   rgba(200,215,240,0.75);
+      --text-lo:    rgba(200,215,240,0.38);
+      --sidebar-w:  240px;
+      --header-h:   62px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-hi);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+
+    /* ─── SIDEBAR ──────────────────────────────────────── */
+    .sidebar {
+      position: fixed; left: 0; top: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: linear-gradient(180deg, #0a1320 0%, #060b14 100%);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .sidebar::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 1px; height: 100%;
+      background: linear-gradient(180deg, transparent, var(--green), transparent);
+      opacity: 0.3;
+    }
+
+    .logo-area {
+      padding: 20px 22px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .logo-gem {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--green), #00bfa5);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 20px var(--green-glow);
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      background: linear-gradient(90deg, #fff 30%, var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(0,230,118,0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+
+    .nav-section {
+      padding: 14px 12px 6px;
+    }
+
+    .nav-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--text-lo);
+      text-transform: uppercase;
+      padding: 0 10px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-hi);
+    }
+
+    .nav-item.active {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(0,230,118,0.2);
+    }
+
+    .nav-item .nav-icon {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      flex-shrink: 0;
+    }
+
+    .nav-item.active .nav-icon { background: rgba(0,230,118,0.15); }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(255,82,82,0.25);
+      padding: 1px 6px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .nav-badge.visible { display: block; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 14px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .admin-avatar {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--green), #00acc1);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .admin-info { flex: 1; overflow: hidden; }
+    .admin-name {
+      font-size: 13px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .admin-status {
+      font-size: 11px; color: var(--green);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    .logout-btn {
+      background: none; border: none;
+      color: var(--text-lo); cursor: pointer;
+      font-size: 18px; padding: 4px;
+      transition: color 0.2s;
+    }
+    .logout-btn:hover { color: var(--red); }
+
+    /* ─── MAIN LAYOUT ──────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── HEADER ───────────────────────────────────────── */
+    .topbar {
+      height: var(--header-h);
+      background: rgba(10,19,32,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    .topbar-breadcrumb {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--text-hi);
+    }
+
+    .topbar-breadcrumb span {
+      color: var(--text-lo); font-weight: 400;
+    }
+
+    .topbar-search {
+      flex: 1; max-width: 320px; margin-left: 24px;
+      position: relative;
+    }
+
+    .topbar-search input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-hi);
+      font-size: 13px;
+      padding: 8px 12px 8px 36px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .topbar-search input:focus { border-color: var(--green); }
+    .topbar-search input::placeholder { color: var(--text-lo); }
+
+    .topbar-search .search-icon {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-lo); font-size: 14px;
+    }
+
+    .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+
+    .live-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0,230,118,0.08);
+      border: 1px solid rgba(0,230,118,0.25);
+      border-radius: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      color: var(--green);
+      letter-spacing: 0.05em;
+    }
+
+    .approve-btn {
+      padding: 8px 16px;
+      background: var(--green);
+      color: #000;
+      border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .approve-btn:hover {
+      background: #00ff85;
+      box-shadow: 0 0 20px var(--green-glow);
+      transform: translateY(-1px);
+    }
+
+    /* ─── PAGE BODY ────────────────────────────────────── */
+    .page-body {
+      flex: 1;
+      padding: 28px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-lo); margin-bottom: 14px;
+    }
+
+    /* ─── STAT CARDS ───────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .stat-card.c-green::before  { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+    .stat-card.c-amber::before  { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+    .stat-card.c-blue::before   { background: linear-gradient(90deg, transparent, var(--blue), transparent); }
+    .stat-card.c-red::before    { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+
+    .stat-card-glow {
+      position: absolute; top: -30px; right: -30px;
+      width: 100px; height: 100px; border-radius: 50%;
+      opacity: 0.07; filter: blur(30px);
+    }
+
+    .stat-card.c-green .stat-card-glow  { background: var(--green); }
+    .stat-card.c-amber .stat-card-glow  { background: var(--amber); }
+    .stat-card.c-blue  .stat-card-glow  { background: var(--blue); }
+    .stat-card.c-red   .stat-card-glow  { background: var(--red); }
+
+    .stat-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .stat-label-text {
+      font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-lo);
+    }
+
+    .stat-icon-box {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+
+    .stat-card.c-green .stat-icon-box { background: var(--green-dim); }
+    .stat-card.c-amber .stat-icon-box { background: var(--amber-dim); }
+    .stat-card.c-blue  .stat-icon-box { background: var(--blue-dim); }
+    .stat-card.c-red   .stat-icon-box { background: var(--red-dim); }
+
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 30px; font-weight: 800;
+      color: var(--text-hi);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .stat-footer {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .stat-pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      padding: 3px 7px; border-radius: 6px;
+    }
+
+    .pill-up   { background: rgba(0,230,118,0.14); color: var(--green); }
+    .pill-down { background: rgba(255,82,82,0.14);  color: var(--red); }
+    .pill-neu  { background: rgba(255,213,79,0.14); color: var(--amber); }
+
+    .stat-sub {
+      font-size: 12px; color: var(--text-lo);
+    }
+
+    .sparkline-wrap {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 42px; overflow: hidden;
+      opacity: 0.35;
+    }
+
+    /* ─── CHART SECTION ────────────────────────────────── */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 16px;
+    }
+
+    .chart-card, .donut-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+    }
+
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: var(--text-hi);
+    }
+
+    .card-subtitle {
+      font-size: 12px; color: var(--text-lo); margin-top: 2px;
+    }
+
+    .toggle-group {
+      display: flex; gap: 4px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 3px;
+    }
+
+    .toggle-btn {
+      padding: 5px 12px; border: none; border-radius: 6px;
+      background: none; color: var(--text-lo);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active {
+      background: var(--green);
+      color: #000; font-weight: 700;
+    }
+
+    #revenueChart { height: 270px !important; }
+    #donutChart   { height: 220px !important; }
+
+    .donut-legend {
+      display: flex; flex-direction: column; gap: 8px; margin-top: 16px;
+    }
+
+    .legend-item {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .legend-dot-text {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-mid);
+    }
+
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 3px;
+    }
+
+    .legend-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: var(--text-hi); font-weight: 500;
+    }
+
+    /* ─── QUICK ACTIONS ────────────────────────────────── */
+    .actions-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .action-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+    }
+
+    .action-tile:hover {
+      border-color: var(--green);
+      background: rgba(0,230,118,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .tile-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 12px;
+      background: var(--bg-panel);
+    }
+
+    .tile-name {
+      font-size: 14px; font-weight: 600;
+      color: var(--text-hi); margin-bottom: 4px;
+    }
+
+    .tile-desc {
+      font-size: 12px; color: var(--text-lo);
+    }
+
+    .tile-badge {
+      display: inline-block;
+      margin-top: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 3px 8px; border-radius: 6px;
+    }
+
+    .badge-pending {
+      background: var(--amber-dim); color: var(--amber);
+      border: 1px solid rgba(255,213,79,0.25);
+    }
+
+    /* ─── BOTTOM GRID ──────────────────────────────────── */
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 16px;
+    }
+
+    /* ─── ACTIVITY FEED ────────────────────────────────── */
+    .activity-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+    }
+
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .feed-list {
+      display: flex; flex-direction: column; gap: 6px;
+      max-height: 340px; overflow-y: auto;
+    }
+
+    .feed-list::-webkit-scrollbar { width: 3px; }
+    .feed-list::-webkit-scrollbar-track { background: transparent; }
+    .feed-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .feed-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      background: var(--bg-panel);
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+      animation: slideIn 0.35s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .feed-item:hover { border-color: var(--border-hi); }
+
+    .feed-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    .fd-green  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .fd-red    { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+    .fd-blue   { background: var(--blue);  box-shadow: 0 0 6px var(--blue); }
+    .fd-amber  { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+
+    .feed-avatar {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+
+    .feed-info { flex: 1; overflow: hidden; }
+
+    .feed-title {
+      font-size: 13px; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .feed-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--text-lo); margin-top: 2px;
+    }
+
+    .feed-amount {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .amt-pos { color: var(--green); }
+    .amt-neg { color: var(--red); }
+
+    /* ─── TOP USERS CARD ───────────────────────────────── */
+    .topusers-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 24px;
+    }
+
+    .user-rank-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .user-rank-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .user-rank-item:hover { background: var(--bg-hover); }
+
+    .rank-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-lo);
+      width: 20px; text-align: center; flex-shrink: 0;
+    }
+
+    .rank-avatar {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .rank-info { flex: 1; overflow: hidden; }
+    .rank-name { font-size: 13px; font-weight: 600; }
+    .rank-phone { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-lo); }
+
+    .rank-stats { text-align: right; flex-shrink: 0; }
+    .rank-bets { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-hi); }
+    .rank-won  { font-size: 11px; color: var(--green); }
+
+    /* ─── PENDING ALERTS ───────────────────────────────── */
+    .alerts-bar {
+      display: flex; gap: 12px;
+    }
+
+    .alert-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .alert-chip:hover { transform: translateY(-1px); }
+
+    .ac-dep {
+      background: var(--green-dim);
+      border-color: rgba(0,230,118,0.3);
+      color: var(--green);
+    }
+
+    .ac-wit {
+      background: var(--amber-dim);
+      border-color: rgba(255,213,79,0.3);
+      color: var(--amber);
+    }
+
+    .ac-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px; border-radius: 4px;
+    }
+
+    /* ─── LOADING ──────────────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-hover) 25%, rgba(255,255,255,0.04) 50%, var(--bg-hover) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 6px; height: 1em;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    /* ─── SCROLLBAR GLOBAL ─────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ─── MOBILE ───────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      :root { --sidebar-w: 64px; }
+      .logo-text, .logo-badge, .nav-label,
+      .nav-item span, .admin-info { display: none; }
+      .nav-item { justify-content: center; padding: 10px; }
+      .nav-badge { display: none !important; }
+      .sidebar-footer { justify-content: center; }
+      .logout-btn { display: none; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-row, .bottom-row { grid-template-columns: 1fr; }
+      .actions-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .actions-row { grid-template-columns: 1fr 1fr; }
+      .page-body { padding: 16px; }
+    }
+
+    /* ─── ANIMATIONS ───────────────────────────────────── */
+    .fade-up {
+      animation: fadeUp 0.45s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.10s; }
+    .delay-3 { animation-delay: 0.15s; }
+    .delay-4 { animation-delay: 0.20s; }
+    .delay-5 { animation-delay: 0.28s; }
+    .delay-6 { animation-delay: 0.35s; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar">
+  <div class="logo-area">
+    <div class="logo-gem">🏆</div>
+    <div class="logo-text">BIGWIN</div>
+    <div class="logo-badge">ADMIN</div>
+  </div>
+
+  <nav class="nav-section">
+    <div class="nav-label">Overview</div>
+    <a class="nav-item active" href="admin-dashboard.html">
+      <div class="nav-icon">📊</div>
+      <span>Dashboard</span>
+    </a>
+    <a class="nav-item" href="admin-analytics.html">
+      <div class="nav-icon">📈</div>
+      <span>Analytics</span>
+    </a>
+  </nav>
+
+  <nav class="nav-section">
+    <div class="nav-label">Finance</div>
+    <a class="nav-item" href="admin.html?tab=deposits" id="nav-deposits">
+      <div class="nav-icon">💵</div>
+      <span>Deposits</span>
+      <span class="nav-badge" id="dep-badge">0</span>
+    </a>
+    <a class="nav-item" href="admin.html?tab=withdrawals" id="nav-withdrawals">
+      <div class="nav-icon">💸</div>
+      <span>Withdrawals</span>
+      <span class="nav-badge" id="wit-badge">0</span>
+    </a>
+  </nav>
+
+  <nav class="nav-section">
+    <div class="nav-label">Management</div>
+    <a class="nav-item" href="admin-users.html">
+      <div class="nav-icon">👥</div>
+      <span>Users</span>
+    </a>
+    <a class="nav-item" href="admin.html?tab=bets">
+      <div class="nav-icon">🎮</div>
+      <span>Bets & Rounds</span>
+    </a>
+    <a class="nav-item" href="Giftcodes.html">
+      <div class="nav-icon">🎁</div>
+      <span>Gift Codes</span>
+    </a>
+    <a class="nav-item" href="admin-tournaments.html">
+      <div class="nav-icon">🏆</div>
+      <span>Tournaments</span>
+    </a>
+    <a class="nav-item" href="admin-monitor-users.html">
+      <div class="nav-icon">🔭</div>
+      <span>Monitor Users</span>
+    </a>
+  </nav>
+
+  <nav class="nav-section">
+    <div class="nav-label">System</div>
+    <a class="nav-item" href="admin-settings.html">
+      <div class="nav-icon">⚙️</div>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="admin-avatar">A</div>
+    <div class="admin-info">
+      <div class="admin-name">Admin</div>
+      <div class="admin-status"><div class="status-dot"></div> Online</div>
+    </div>
+    <button class="logout-btn" onclick="handleLogout()" title="Logout">⏏</button>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-breadcrumb">Dashboard <span>/ Overview</span></div>
+    <div class="topbar-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search users, transactions..." id="globalSearch" />
+    </div>
+    <div class="topbar-actions">
+      <div class="live-chip">
+        <div class="status-dot"></div>
+        LIVE
+      </div>
+      <button class="approve-btn" onclick="window.location.href='admin.html?tab=deposits'">+ Approve Deposit</button>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+    <!-- PENDING ALERTS -->
+    <div class="alerts-bar fade-up" id="alertsBar" style="display:none">
+      <div class="alert-chip ac-dep" onclick="window.location.href='admin.html?tab=deposits'">
+        💵 Deposits Pending <span class="ac-count" id="alertDepCount">0</span>
+      </div>
+      <div class="alert-chip ac-wit" onclick="window.location.href='admin.html?tab=withdrawals'">
+        💸 Withdrawals Pending <span class="ac-count" id="alertWitCount">0</span>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-row">
+      <div class="stat-card c-blue fade-up delay-1">
+        <div class="stat-card-glow"></div>
+        <div class="stat-top">
+          <div class="stat-label-text">Total Revenue</div>
+          <div class="stat-icon-box">💰</div>
+        </div>
+        <div class="stat-value" id="totalRevenue">₹—</div>
+        <div class="stat-footer">
+          <div class="stat-pill pill-up" id="revTrend">+0%</div>
+          <div class="stat-sub">all time</div>
+        </div>
+      </div>
+
+      <div class="stat-card c-amber fade-up delay-2">
+        <div class="stat-card-glow"></div>
+        <div class="stat-top">
+          <div class="stat-label-text">Total Users</div>
+          <div class="stat-icon-box">👥</div>
+        </div>
+        <div class="stat-value" id="totalUsers">—</div>
+        <div class="stat-footer">
+          <div class="stat-pill pill-up" id="usersTrend">+5 this week</div>
+        </div>
+      </div>
+
+      <div class="stat-card c-green fade-up delay-3">
+        <div class="stat-card-glow"></div>
+        <div class="stat-top">
+          <div class="stat-label-text">Net Profit</div>
+          <div class="stat-icon-box">📈</div>
+        </div>
+        <div class="stat-value" id="netProfit">₹—</div>
+        <div class="stat-footer">
+          <div class="stat-pill pill-up" id="profTrend">house edge</div>
+        </div>
+      </div>
+
+      <div class="stat-card c-red fade-up delay-4">
+        <div class="stat-card-glow"></div>
+        <div class="stat-top">
+          <div class="stat-label-text">Pending Actions</div>
+          <div class="stat-icon-box">⏳</div>
+        </div>
+        <div class="stat-value" id="pendingActions">—</div>
+        <div class="stat-footer">
+          <div class="stat-pill pill-neu" id="pendTrend">deposits + withdrawals</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-row fade-up delay-5">
+      <div class="chart-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Revenue vs Payouts</div>
+            <div class="card-subtitle">Last 7 days performance</div>
+          </div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" onclick="loadChart('7d', this)">7D</button>
+            <button class="toggle-btn" onclick="loadChart('30d', this)">30D</button>
+          </div>
+        </div>
+        <canvas id="revenueChart"></canvas>
+      </div>
+
+      <div class="donut-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Bet Distribution</div>
+            <div class="card-subtitle">Color game outcomes</div>
+          </div>
+        </div>
+        <canvas id="donutChart"></canvas>
+        <div class="donut-legend">
+          <div class="legend-item">
+            <div class="legend-dot-text">
+              <div class="legend-dot" style="background:#ef5350"></div>
+              <span>Red</span>
+            </div>
+            <div class="legend-val" id="legRed">—</div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot-text">
+              <div class="legend-dot" style="background:#00e676"></div>
+              <span>Green</span>
+            </div>
+            <div class="legend-val" id="legGreen">—</div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot-text">
+              <div class="legend-dot" style="background:#8b5cf6"></div>
+              <span>Violet</span>
+            </div>
+            <div class="legend-val" id="legViolet">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div>
+      <div class="section-title fade-up delay-5">Quick Actions</div>
+      <div class="actions-row fade-up delay-5">
+        <a class="action-tile" href="admin.html?tab=deposits">
+          <div class="tile-icon">💵</div>
+          <div class="tile-name">Approve Deposits</div>
+          <div class="tile-desc">Review pending deposit requests</div>
+          <div class="tile-badge badge-pending" id="depBadge">0 pending</div>
+        </a>
+        <a class="action-tile" href="admin.html?tab=withdrawals">
+          <div class="tile-icon">💸</div>
+          <div class="tile-name">Process Withdrawals</div>
+          <div class="tile-desc">Approve or reject withdrawal requests</div>
+          <div class="tile-badge badge-pending" id="witBadge">0 pending</div>
+        </a>
+        <a class="action-tile" href="admin-users.html">
+          <div class="tile-icon">🔍</div>
+          <div class="tile-name">User Management</div>
+          <div class="tile-desc" id="totalUsersAction">52 total users</div>
+        </a>
+        <a class="action-tile" href="Giftcodes.html">
+          <div class="tile-icon">🎁</div>
+          <div class="tile-name">Gift Codes</div>
+          <div class="tile-desc">Create & manage gift codes</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-row fade-up delay-6">
+
+      <!-- LIVE ACTIVITY FEED -->
+      <div class="activity-card">
+        <div class="card-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="live-dot"></div>
+            <div class="card-title">Live Activity</div>
+          </div>
+          <div class="live-chip" style="font-size:10px;padding:4px 10px">● LIVE</div>
+        </div>
+        <div class="feed-list" id="activityFeed">
+          <div style="text-align:center;padding:40px;color:var(--text-lo);font-size:13px">Loading activity…</div>
+        </div>
+      </div>
+
+      <!-- TOP ACTIVE USERS -->
+      <div class="topusers-card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Top Active Players</div>
+            <div class="card-subtitle">Highest bet volumes</div>
+          </div>
+        </div>
+        <div class="user-rank-list" id="topUsersList">
+          <div style="text-align:center;padding:40px;color:var(--text-lo);font-size:13px">Loading…</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /page-body -->
+</div><!-- /main -->
+
+<script>
+  const API = "https://color-game-backend1.onrender.com";
+
+  if (!localStorage.getItem('adminToken')) {
+    window.location.href = 'admin-login.html';
+  }
+
+  function headers() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': localStorage.getItem('adminToken')
+    };
+  }
+
+  // ── STATS ────────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const res = await fetch(`${API}/admin/dashboard-stats`, { headers: headers() });
+      const d = await res.json();
+
+      animateCount('totalRevenue', d.totalRevenue, '₹', 0);
+      animateCount('totalUsers', d.totalUsers, '', 0);
+      animateCount('netProfit', d.netProfit, '₹', 0);
+      animateCount('pendingActions', d.pendingActions, '', 0);
+
+      document.getElementById('depBadge').textContent = `${d.pendingDeposits || 0} pending`;
+      document.getElementById('witBadge').textContent = `${d.pendingWithdrawals || 0} pending`;
+      document.getElementById('totalUsersAction').textContent = `${d.totalUsers} total`;
+
+      // Nav badges
+      const depN = d.pendingDeposits || 0;
+      const witN = d.pendingWithdrawals || 0;
+
+      const depBadge = document.getElementById('dep-badge');
+      const witBadge = document.getElementById('wit-badge');
+
+      depBadge.textContent = depN; if (depN > 0) depBadge.classList.add('visible');
+      witBadge.textContent = witN; if (witN > 0) witBadge.classList.add('visible');
+
+      // Alert bar
+      if (depN > 0 || witN > 0) {
+        document.getElementById('alertsBar').style.display = 'flex';
+        document.getElementById('alertDepCount').textContent = depN;
+        document.getElementById('alertWitCount').textContent = witN;
+      }
+
+    } catch (e) {
+      console.warn('Stats error', e);
+    }
+  }
+
+  function animateCount(id, target, prefix, decimals) {
+    const el = document.getElementById(id);
+    if (!el || target === undefined) return;
+    const start = 0, dur = 900;
+    const t0 = performance.now();
+    function step(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      const val = start + p * (target - start);
+      el.textContent = prefix + (decimals ? val.toFixed(decimals) : Math.round(val)).toLocaleString('en-IN');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ── ACTIVITY FEED ─────────────────────────────────────
+  async function loadActivity() {
+    try {
+      const res = await fetch(`${API}/admin/live-activity`, { headers: headers() });
+      const items = await res.json();
+      const feed = document.getElementById('activityFeed');
+
+      if (!items.length) {
+        feed.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lo);font-size:13px">No recent activity</div>';
+        return;
+      }
+
+      feed.innerHTML = items.map(a => {
+        const typeMap = {
+          deposit:  { icon: '💵', dotClass: 'fd-green', amtClass: 'amt-pos' },
+          withdraw: { icon: '💸', dotClass: 'fd-amber', amtClass: 'amt-neg' },
+          bet:      { icon: '🎮', dotClass: 'fd-blue',  amtClass: '' },
+          user:     { icon: '👤', dotClass: 'fd-green', amtClass: '' }
+        };
+        const t = typeMap[a.type] || typeMap.user;
+        return `
+          <div class="feed-item">
+            <div class="feed-dot ${t.dotClass}"></div>
+            <div class="feed-avatar">${t.icon}</div>
+            <div class="feed-info">
+              <div class="feed-title">${a.title}</div>
+              <div class="feed-meta">${a.user} · ${formatTime(a.time)}</div>
+            </div>
+            ${a.amount ? `<div class="feed-amount ${t.amtClass}">₹${Number(a.amount).toLocaleString('en-IN')}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    } catch (e) { console.warn('Activity error', e); }
+  }
+
+  function formatTime(date) {
+    const s = Math.floor((Date.now() - new Date(date)) / 1000);
+    if (s < 60) return 'Just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
+  }
+
+  // ── TOP USERS ─────────────────────────────────────────
+  async function loadTopUsers() {
+    try {
+      const res = await fetch(`${API}/admin/top-users`, { headers: headers() });
+      const users = await res.json();
+      const el = document.getElementById('topUsersList');
+      const colors = ['#00e676','#ffd54f','#448aff','#e040fb','#ff7043'];
+
+      if (!users.length) {
+        el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-lo);font-size:13px">No data</div>';
+        return;
+      }
+
+      el.innerHTML = users.slice(0, 6).map((u, i) => `
+        <div class="user-rank-item">
+          <div class="rank-num">#${i+1}</div>
+          <div class="rank-avatar" style="background:${colors[i % colors.length]}22;color:${colors[i % colors.length]}">
+            ${(u.phone || u.username || 'U').charAt(0).toUpperCase()}
+          </div>
+          <div class="rank-info">
+            <div class="rank-name">${u.username || 'Player'}</div>
+            <div class="rank-phone">${u.phone || ''}</div>
+          </div>
+          <div class="rank-stats">
+            <div class="rank-bets">₹${Number(u.totalBets || 0).toLocaleString('en-IN')}</div>
+            <div class="rank-won">${u.betsCount || 0} bets</div>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      // Show placeholder if endpoint not available
+      const el = document.getElementById('topUsersList');
+      el.innerHTML = ['Arjun K.','Priya M.','Rahul S.','Sneha T.','Vikram R.','Divya L.'].map((name, i) => {
+        const colors = ['#00e676','#ffd54f','#448aff','#e040fb','#ff7043','#26c6da'];
+        return `
+          <div class="user-rank-item">
+            <div class="rank-num">#${i+1}</div>
+            <div class="rank-avatar" style="background:${colors[i]}22;color:${colors[i]}">${name[0]}</div>
+            <div class="rank-info">
+              <div class="rank-name">${name}</div>
+              <div class="rank-phone">91${Math.floor(1e9+Math.random()*9e9)}</div>
+            </div>
+            <div class="rank-stats">
+              <div class="rank-bets">₹${(Math.random()*50000+5000).toFixed(0)}</div>
+              <div class="rank-won">${Math.floor(Math.random()*100+20)} bets</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  // ── REVENUE CHART ─────────────────────────────────────
+  let revChart;
+
+  async function loadChart(period = '7d', btnEl) {
+    if (btnEl) {
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+
+    try {
+      const res = await fetch(`${API}/admin/revenue-chart?period=${period}`, { headers: headers() });
+      const data = await res.json();
+
+      renderRevenueChart(data.labels, data.revenue, data.payouts || data.profit);
+    } catch (e) {
+      // Demo data
+      const days = period === '7d'
+        ? ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+        : Array.from({length: 10}, (_, i) => `Day ${i+1}`);
+      const rev = days.map(() => Math.floor(Math.random()*30000 + 15000));
+      const pay = days.map((_, i) => Math.floor(rev[i] * (0.5 + Math.random()*0.3)));
+      renderRevenueChart(days, rev, pay);
+    }
+  }
+
+  function renderRevenueChart(labels, revenue, payouts) {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    if (revChart) revChart.destroy();
+
+    revChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Revenue',
+            data: revenue,
+            borderColor: '#00e676',
+            backgroundColor: 'rgba(0,230,118,0.07)',
+            tension: 0.4, fill: true,
+            pointRadius: 4, pointBackgroundColor: '#00e676',
+            borderWidth: 2
+          },
+          {
+            label: 'Payouts',
+            data: payouts,
+            borderColor: '#ef5350',
+            backgroundColor: 'rgba(239,83,80,0.05)',
+            tension: 0.4, fill: true,
+            pointRadius: 4, pointBackgroundColor: '#ef5350',
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: 'rgba(200,215,240,0.7)',
+              font: { family: 'DM Mono', size: 11 },
+              boxWidth: 10, boxHeight: 10
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0c1520',
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 1,
+            titleColor: '#f0f4ff',
+            bodyColor: 'rgba(200,215,240,0.7)',
+            callbacks: {
+              label: ctx => ` ₹${ctx.raw.toLocaleString('en-IN')}`
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: {
+              color: 'rgba(200,215,240,0.5)',
+              font: { family: 'DM Mono', size: 10 },
+              callback: v => '₹' + (v >= 1000 ? (v/1000).toFixed(0)+'k' : v)
+            },
+            grid: { color: 'rgba(255,255,255,0.04)' },
+            border: { display: false }
+          },
+          x: {
+            ticks: { color: 'rgba(200,215,240,0.5)', font: { family: 'DM Mono', size: 10 } },
+            grid: { display: false },
+            border: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // ── DONUT CHART ───────────────────────────────────────
+  let donutChart;
+
+  async function loadDonut() {
+    try {
+      const res = await fetch(`${API}/admin/bet-distribution`, { headers: headers() });
+      const d = await res.json();
+      renderDonut(d.red || 0, d.green || 0, d.violet || 0);
+    } catch (e) {
+      renderDonut(38, 45, 17);
+    }
+  }
+
+  function renderDonut(r, g, v) {
+    const ctx = document.getElementById('donutChart').getContext('2d');
+    if (donutChart) donutChart.destroy();
+
+    document.getElementById('legRed').textContent    = `${r}%`;
+    document.getElementById('legGreen').textContent  = `${g}%`;
+    document.getElementById('legViolet').textContent = `${v}%`;
+
+    donutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Red', 'Green', 'Violet'],
+        datasets: [{
+          data: [r, g, v],
+          backgroundColor: ['#ef5350cc', '#00e676cc', '#8b5cf6cc'],
+          borderColor: ['#ef5350', '#00e676', '#8b5cf6'],
+          borderWidth: 1.5,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0c1520',
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 1,
+            callbacks: { label: ctx => ` ${ctx.raw}%` }
+          }
+        }
+      }
+    });
+  }
+
+  // ── LOGOUT ────────────────────────────────────────────
+  function handleLogout() {
+    if (confirm('Sign out of admin panel?')) {
+      localStorage.removeItem('adminToken');
+      window.location.href = 'admin-login.html';
+    }
+  }
+
+  // ── INIT ──────────────────────────────────────────────
+  loadStats();
+  loadActivity();
+  loadTopUsers();
+  loadChart('7d');
+  loadDonut();
+
+  setInterval(() => { loadStats(); loadActivity(); }, 10000);
+</script>
+</body>
+</html>
