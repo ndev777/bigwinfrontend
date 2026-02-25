@@ -1,563 +1,562 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Wallet — BIGWIN</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg:  #060912; --bg2: #0c1020; --bg3: #111826; --bg4: #181f2e;
-      --teal:  #00d4c8; --teal2: #00a89e; --teal3: rgba(0,212,200,.15); --teal4: rgba(0,212,200,.08);
-      --gold:  #ffc400; --gold2: rgba(255,196,0,.15);
-      --grn:   #34d399; --grn2:  rgba(52,211,153,.15);
-      --red:   #fb7185; --red2:  rgba(251,113,133,.12);
-      --blue:  #60a5fa; --blue2: rgba(96,165,250,.12);
-      --bdr:   rgba(255,255,255,.07); --bdr2: rgba(255,255,255,.12);
-      --txt:   #e8f0ff; --mt: rgba(232,240,255,.45); --mt2: rgba(232,240,255,.2);
-    }
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    body {
-      font-family:'Urbanist',sans-serif; background:var(--bg);
-      color:var(--txt); min-height:100vh; padding-bottom:96px; overflow-x:hidden;
-    }
-    /* atmosphere */
-    body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(0,212,200,.12) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 85% 90%, rgba(96,165,250,.08) 0%, transparent 55%);
-    }
-    /* subtle diagonal lines */
-    body::after {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background-image:repeating-linear-gradient(
-        -45deg, rgba(0,212,200,.015) 0px, rgba(0,212,200,.015) 1px,
-        transparent 1px, transparent 32px
-      );
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>My Wallet — BIGWIN</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #0b0c17;
+  --card:       rgba(255,255,255,0.07);
+  --card2:      rgba(255,255,255,0.04);
+  --glass:      rgba(255,255,255,0.09);
+  --border:     rgba(255,255,255,0.10);
+  --border2:    rgba(255,255,255,0.06);
+  --green:      #34c759;
+  --green-bg:   rgba(52,199,89,0.12);
+  --red:        #ff3b5c;
+  --red-bg:     rgba(255,59,92,0.12);
+  --blue:       #007aff;
+  --blue-bg:    rgba(0,122,255,0.12);
+  --gold:       #ffd60a;
+  --gold-bg:    rgba(255,214,10,0.10);
+  --purple:     #af52de;
+  --purple-bg:  rgba(175,82,222,0.12);
+  --txt:        #f2f2f7;
+  --txt2:       rgba(242,242,247,0.55);
+  --txt3:       rgba(242,242,247,0.30);
+  --safe-top:   env(safe-area-inset-top, 44px);
+  --safe-bot:   env(safe-area-inset-bottom, 34px);
+}
 
-    .pg { max-width:460px; margin:0 auto; padding:0 14px 20px; position:relative; z-index:2; }
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
 
-    /* stagger anim */
-    .rev { opacity:0; transform:translateY(18px); animation:rev .5s ease-out forwards; }
-    @keyframes rev { to{opacity:1;transform:none} }
-    .r1{animation-delay:.04s} .r2{animation-delay:.10s} .r3{animation-delay:.16s}
-    .r4{animation-delay:.22s} .r5{animation-delay:.28s}
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  padding-bottom: calc(90px + var(--safe-bot));
+}
 
-    /* ── STICKY HEADER ── */
-    .hdr {
-      position:sticky; top:0; z-index:50;
-      background:rgba(6,9,18,.9); backdrop-filter:blur(24px);
-      border-bottom:1px solid var(--bdr);
-      padding:13px 14px; max-width:460px; margin:0 auto;
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .hdr-title {
-      font-size:20px; font-weight:900; letter-spacing:-.3px;
-      background:linear-gradient(90deg,#fff 0%,var(--teal) 100%);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    }
-    .hdr-refresh {
-      width:34px; height:34px; border-radius:10px;
-      background:rgba(255,255,255,.06); border:1px solid var(--bdr2);
-      color:var(--mt); font-size:15px; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; transition:all .2s;
-    }
-    .hdr-refresh:active { transform:rotate(180deg) scale(.9); }
-    .hdr-refresh.spin { animation:spinAnim .6s linear; }
-    @keyframes spinAnim { to{transform:rotate(360deg)} }
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 35% at 15% 5%, rgba(52,199,89,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 80%, rgba(0,122,255,.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 50% 40%, rgba(255,214,10,.03) 0%, transparent 70%);
+}
 
-    /* ── VAULT CARD ── */
-    .vault {
-      margin:14px 0 12px; border-radius:28px; overflow:hidden;
-      background:linear-gradient(145deg,#0a1628,#0e1e38,#0a1228);
-      border:1px solid rgba(0,212,200,.2);
-      box-shadow:0 0 60px rgba(0,212,200,.1), inset 0 1px 0 rgba(0,212,200,.1);
-      position:relative;
-    }
-    /* teal glow top edge */
-    .vault::before {
-      content:''; position:absolute; top:0; left:10%; right:10%; height:1px;
-      background:linear-gradient(90deg,transparent,var(--teal),transparent);
-      filter:blur(1px);
-    }
-    /* circuit board pattern top-right */
-    .vault::after {
-      content:''; position:absolute; top:0; right:0; width:180px; height:180px;
-      background:radial-gradient(circle at 100% 0%, rgba(0,212,200,.1), transparent 60%);
-      pointer-events:none;
-    }
+.wrap {
+  max-width: 430px; margin: 0 auto;
+  padding: 0 16px;
+  position: relative; z-index: 1;
+}
 
-    .vault-inner { padding:24px 20px 20px; position:relative; z-index:1; }
+.safe-top { height: calc(var(--safe-top) + 8px); }
 
-    .vault-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px; }
-    .vault-lbl {
-      font-size:10px; font-weight:700; text-transform:uppercase;
-      letter-spacing:2.5px; color:var(--teal); margin-bottom:6px;
-    }
-    .vault-total {
-      font-family:'IBM Plex Mono',monospace; font-size:46px; font-weight:600;
-      color:#fff; line-height:1;
-      text-shadow:0 0 40px rgba(0,212,200,.4);
-    }
-    .vault-total.counting { animation:countPop .25s ease-out; }
-    @keyframes countPop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+/* ── TOP HEADER ── */
+.top-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 0 16px;
+}
+.page-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 24px; font-weight: 900; letter-spacing: -.3px;
+}
+.refresh-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--border);
+  display: grid; place-items: center; font-size: 16px;
+  cursor: pointer; transition: all .2s;
+  backdrop-filter: blur(10px);
+}
+.refresh-btn:active { transform: scale(.88) rotate(90deg); }
 
-    /* animated teal "live" dot */
-    .live-dot {
-      display:flex; align-items:center; gap:5px;
-      font-size:10px; font-weight:700; letter-spacing:1px; color:var(--teal);
-      background:rgba(0,212,200,.08); border:1px solid rgba(0,212,200,.2);
-      border-radius:20px; padding:5px 10px; flex-shrink:0;
-    }
-    .live-dot span { width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:livePulse 2s ease-in-out infinite; }
-    @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+/* ── BALANCE CARD ── */
+.bal-card {
+  background: linear-gradient(145deg, #111824 0%, #0d1620 60%, #0a1218 100%);
+  border: 1px solid rgba(52,199,89,.2);
+  border-radius: 28px; padding: 22px 20px 18px;
+  margin-bottom: 14px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(52,199,89,.08) inset;
+}
+.bal-card::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(52,199,89,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bal-card::after {
+  content: '';
+  position: absolute; bottom: -30px; left: -20px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,122,255,.05) 0%, transparent 70%);
+  pointer-events: none;
+}
 
-    /* wallet/bonus split */
-    .vault-split { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-    .vsplit-box {
-      background:rgba(0,0,0,.25); border:1px solid var(--bdr2);
-      border-radius:16px; padding:12px 14px; position:relative; overflow:hidden;
-    }
-    .vsplit-box::after {
-      content:''; position:absolute; bottom:0; left:0; right:0; height:2px; border-radius:0 0 16px 16px;
-    }
-    .vsplit-box.wallet::after { background:linear-gradient(90deg,var(--teal),var(--blue)); }
-    .vsplit-box.bonus::after  { background:linear-gradient(90deg,var(--gold),#ff8c00); }
-    .vsplit-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--mt); margin-bottom:4px; }
-    .vsplit-val { font-family:'IBM Plex Mono',monospace; font-size:20px; font-weight:600; }
-    .vsplit-val.w { color:var(--teal); }
-    .vsplit-val.b { color:var(--gold); }
-    .vsplit-note { font-size:9px; color:var(--mt2); margin-top:3px; }
+.bal-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.bal-lbl {
+  font-size: 11px; font-weight: 800; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--txt3);
+}
+.live-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--green-bg); border: 1px solid rgba(52,199,89,.25);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 10px; font-weight: 800; color: var(--green);
+  letter-spacing: .5px;
+}
+.live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 1.8s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* Progress bar row */
-    .vault-bar-row { display:flex; align-items:center; gap:10px; }
-    .vault-bar-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--mt); flex-shrink:0; }
-    .vault-bar { flex:1; height:5px; background:rgba(255,255,255,.08); border-radius:3px; overflow:hidden; }
-    .vault-bar-fill {
-      height:100%; border-radius:3px; width:0%;
-      background:linear-gradient(90deg,var(--teal),var(--blue));
-      transition:width 1.2s cubic-bezier(.25,.46,.45,.94);
-      box-shadow:0 0 8px rgba(0,212,200,.5);
-    }
-    .vault-bar-pct { font-size:10px; font-weight:700; color:var(--teal); font-family:'IBM Plex Mono',monospace; flex-shrink:0; }
+.total-balance {
+  font-family: 'Nunito', sans-serif;
+  font-size: 44px; font-weight: 900; letter-spacing: -1px;
+  color: #fff; margin: 6px 0 18px; line-height: 1;
+}
+.total-balance .sym { font-size: 28px; vertical-align: top; margin-top: 7px; display: inline-block; color: rgba(255,255,255,.7); }
 
-    /* ── ACTION BUTTONS ── */
-    .action-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
-    .act-btn {
-      display:flex; align-items:center; justify-content:center; gap:9px;
-      padding:16px 12px; border-radius:18px; border:none; cursor:pointer;
-      font-family:'Urbanist',sans-serif; font-size:15px; font-weight:800;
-      text-decoration:none; color:#fff; transition:all .25s;
-      position:relative; overflow:hidden; letter-spacing:.3px;
-    }
-    .act-btn::after {
-      content:''; position:absolute; inset:0;
-      background:rgba(255,255,255,.12); opacity:0; transition:opacity .2s;
-    }
-    .act-btn:hover::after { opacity:1; }
-    .act-btn:active { transform:scale(.96); }
-    .act-btn.dep {
-      background:linear-gradient(135deg,#00d4c8,#0099c8);
-      box-shadow:0 8px 28px rgba(0,212,200,.4), inset 0 1px 0 rgba(255,255,255,.2);
-    }
-    .act-btn.wd {
-      background:linear-gradient(135deg,#ff6b6b,#d63031);
-      box-shadow:0 8px 28px rgba(255,107,107,.35), inset 0 1px 0 rgba(255,255,255,.15);
-    }
-    .act-btn .aico { font-size:20px; }
-    .act-btn .albl { font-size:15px; font-weight:800; }
+.bal-split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 16px;
+}
+.bal-box {
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border2);
+  border-radius: 16px; padding: 12px 14px;
+}
+.bal-box-lbl {
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--txt3); margin-bottom: 5px;
+}
+.bal-box-val {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px; font-weight: 900; color: var(--green);
+}
+.bal-box-hint {
+  font-size: 10px; color: var(--txt3); margin-top: 3px;
+  font-weight: 600;
+}
+.bal-box.bonus .bal-box-val { color: var(--gold); }
 
-    /* ── QUICK LINKS ── */
-    .qlinks { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
-    .qlink {
-      display:flex; flex-direction:column; align-items:center; gap:5px;
-      padding:12px 4px; border-radius:16px;
-      background:var(--bg3); border:1px solid var(--bdr);
-      text-decoration:none; color:var(--mt); transition:all .2s; cursor:pointer;
-    }
-    .qlink:hover { background:var(--bg4); border-color:var(--bdr2); color:var(--txt); }
-    .qlink:active { transform:scale(.93); }
-    .qlink .qi { font-size:22px; }
-    .qlink .ql { font-size:10px; font-weight:700; text-align:center; }
+.wallet-pct-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.pct-lbl {
+  font-size: 10px; font-weight: 700; color: var(--txt3);
+  letter-spacing: .5px; text-transform: uppercase; flex-shrink: 0;
+}
+.pct-bar-wrap {
+  flex: 1; height: 5px; background: rgba(255,255,255,.08);
+  border-radius: 3px; overflow: hidden;
+}
+.pct-bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--green), #28a745);
+  border-radius: 3px; transition: width .6s ease;
+}
+.pct-val { font-size: 11px; font-weight: 800; color: var(--green); flex-shrink: 0; }
 
-    /* ── STATS STRIP ── */
-    .stats-strip {
-      display:grid; grid-template-columns:1fr 1fr 1fr;
-      gap:8px; margin-bottom:12px;
-    }
-    .sbox {
-      background:var(--bg3); border:1px solid var(--bdr);
-      border-radius:16px; padding:12px 10px; text-align:center;
-    }
-    .sbox-icon { font-size:18px; margin-bottom:4px; }
-    .sbox-val { font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:#fff; margin-bottom:1px; }
-    .sbox-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--mt); }
+/* ── ACTION BUTTONS ── */
+.action-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 14px;
+}
+.act-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 17px 16px; border-radius: 20px; border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px; font-weight: 900;
+  cursor: pointer; text-decoration: none;
+  transition: transform .15s, box-shadow .2s;
+}
+.act-btn:active { transform: scale(.94); }
+.act-btn.deposit {
+  background: linear-gradient(135deg, #34c759, #1a9e3f);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(52,199,89,.35);
+}
+.act-btn.withdraw {
+  background: linear-gradient(135deg, #ff3b5c, #c8102e);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(255,59,92,.3);
+}
+.act-btn-icon { font-size: 20px; }
 
-    /* ── TABS ── */
-    .tabs-wrap {
-      background:rgba(255,255,255,.04); border:1px solid var(--bdr);
-      border-radius:16px; padding:5px; display:flex; gap:4px; margin-bottom:10px;
-    }
-    .tab-btn {
-      flex:1; padding:10px 6px; border:none; border-radius:12px;
-      background:transparent; color:var(--mt); font-family:'Urbanist',sans-serif;
-      font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; letter-spacing:.3px;
-    }
-    .tab-btn.on {
-      background:var(--bg3); color:#fff;
-      box-shadow:0 2px 12px rgba(0,0,0,.3);
-      border:1px solid var(--bdr2);
-    }
-    .tab-btn.on.all  { color:var(--teal); }
-    .tab-btn.on.dep  { color:var(--grn); }
-    .tab-btn.on.wd   { color:var(--red); }
+/* ── QUICK LINKS ── */
+.quick-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
+  margin-bottom: 14px;
+}
+.ql-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 14px 8px;
+  cursor: pointer; text-decoration: none;
+  transition: all .2s;
+  backdrop-filter: blur(10px);
+}
+.ql-btn:active { transform: scale(.92); background: var(--glass); }
+.ql-icon {
+  width: 40px; height: 40px; border-radius: 13px;
+  display: grid; place-items: center; font-size: 18px;
+}
+.ql-lbl {
+  font-size: 10px; font-weight: 800; color: var(--txt3);
+  letter-spacing: .3px; text-align: center; line-height: 1.2;
+}
+.ql-btn.g .ql-icon  { background: var(--green-bg); }
+.ql-btn.r .ql-icon  { background: var(--red-bg); }
+.ql-btn.b .ql-icon  { background: var(--blue-bg); }
+.ql-btn.p .ql-icon  { background: var(--purple-bg); }
 
-    /* ── TRANSACTION LIST ── */
-    .tx-list { display:flex; flex-direction:column; gap:8px; }
+/* ── STATS STRIP ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+  margin-bottom: 14px;
+}
+.stat-box {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 14px 12px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+.stat-icon { font-size: 20px; margin-bottom: 6px; }
+.stat-val {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px; font-weight: 900; color: var(--txt);
+  margin-bottom: 3px;
+}
+.stat-lbl {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--txt3);
+}
 
-    .tx-card {
-      display:flex; align-items:center; gap:12px;
-      padding:13px 14px; background:var(--bg3); border:1px solid var(--bdr);
-      border-radius:18px; transition:border-color .18s;
-    }
-    .tx-card:hover { border-color:var(--bdr2); }
+/* ── TABS ── */
+.tabs-wrap { margin-bottom: 10px; }
+.tabs-seg {
+  display: flex; background: rgba(255,255,255,.06);
+  border-radius: 14px; padding: 4px; gap: 2px;
+}
+.seg-tab {
+  flex: 1; padding: 9px; border: none; border-radius: 11px;
+  background: none; color: var(--txt3);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 800;
+  cursor: pointer; transition: all .2s; letter-spacing: .2px;
+}
+.seg-tab.active {
+  background: var(--glass); color: var(--txt);
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+}
 
-    .tx-icon {
-      width:42px; height:42px; border-radius:13px; flex-shrink:0;
-      display:flex; align-items:center; justify-content:center; font-size:19px;
-    }
-    .txi-dep { background:var(--grn2); border:1px solid rgba(52,211,153,.2); }
-    .txi-wd  { background:var(--red2); border:1px solid rgba(251,113,133,.2); }
-    .txi-bon { background:var(--gold2); border:1px solid rgba(255,196,0,.2); }
+/* ── TRANSACTION LIST ── */
+.tx-list {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 22px; overflow: hidden;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+.tx-empty {
+  padding: 50px 20px; text-align: center; color: var(--txt3);
+  font-size: 14px; font-weight: 700;
+}
+.tx-empty-icon { font-size: 40px; opacity: .3; margin-bottom: 10px; }
 
-    .tx-body { flex:1; min-width:0; }
-    .tx-title { font-size:14px; font-weight:700; color:var(--txt); }
-    .tx-sub   { font-size:11px; color:var(--mt); margin-top:1px; }
+.tx-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border2);
+  transition: background .15s;
+}
+.tx-item:last-child { border-bottom: none; }
+.tx-item:active { background: rgba(255,255,255,.03); }
 
-    .tx-right { text-align:right; flex-shrink:0; }
-    .tx-amt { font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:600; margin-bottom:3px; }
-    .tx-amt.pos { color:var(--grn); }
-    .tx-amt.neg { color:var(--red); }
+.tx-icon-wrap {
+  width: 42px; height: 42px; border-radius: 14px;
+  display: grid; place-items: center; font-size: 18px; flex-shrink: 0;
+}
+.tx-icon-wrap.dep { background: var(--green-bg); }
+.tx-icon-wrap.wit { background: var(--red-bg); }
 
-    .tx-badge {
-      padding:3px 9px; border-radius:20px;
-      font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.8px;
-    }
-    .tb-success { background:var(--grn2); border:1px solid rgba(52,211,153,.25); color:var(--grn); }
-    .tb-pending { background:rgba(255,196,0,.1); border:1px solid rgba(255,196,0,.25); color:var(--gold); }
-    .tb-failed  { background:var(--red2); border:1px solid rgba(251,113,133,.25); color:var(--red); }
+.tx-info { flex: 1; min-width: 0; }
+.tx-type {
+  font-size: 14px; font-weight: 800; color: var(--txt);
+  margin-bottom: 3px;
+}
+.tx-date { font-size: 11px; color: var(--txt3); font-weight: 600; }
 
-    .tx-empty { text-align:center; padding:48px 20px; }
-    .tx-empty .ei { font-size:48px; opacity:.2; margin-bottom:12px; }
-    .tx-empty p { font-size:13px; color:var(--mt); font-weight:500; }
+.tx-right { text-align: right; flex-shrink: 0; }
+.tx-amt {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 900; margin-bottom: 4px;
+}
+.tx-amt.pos { color: var(--green); }
+.tx-amt.neg { color: var(--red); }
+.tx-status {
+  display: inline-flex; padding: 2px 8px; border-radius: 6px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px;
+}
+.s-success, .s-approved { background: var(--green-bg); color: var(--green); }
+.s-pending  { background: var(--gold-bg); color: var(--gold); }
+.s-failed, .s-rejected   { background: var(--red-bg); color: var(--red); }
 
-    /* ── SKELETON ── */
-    .sk { background:linear-gradient(90deg,rgba(255,255,255,.06) 25%,rgba(255,255,255,.1) 50%,rgba(255,255,255,.06) 75%); background-size:200%; animation:sk 1.3s infinite; border-radius:8px; display:inline-block; }
-    @keyframes sk { to{background-position:-200% 0} }
-
-    /* ── TOAST ── */
-    .toast {
-      position:fixed; bottom:102px; left:50%; transform:translateX(-50%) translateY(10px);
-      background:var(--bg4); border:1px solid var(--bdr2); border-radius:12px;
-      padding:10px 18px; font-size:13px; font-weight:600;
-      opacity:0; transition:all .3s; z-index:400; pointer-events:none; white-space:nowrap;
-    }
-    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-    .toast.ok  { border-color:rgba(0,212,200,.4); }
-    .toast.err { border-color:rgba(251,113,133,.4); }
-
-    /* ── BOTTOM NAV ── */
-    .bot-nav {
-      position:fixed; bottom:0; left:0; right:0;
-      background:rgba(6,9,18,.97); backdrop-filter:blur(24px);
-      border-top:1px solid var(--bdr);
-      display:flex; padding:10px 0 14px; z-index:100;
-    }
-    .nav-a { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; color:rgba(255,255,255,.25); text-decoration:none; transition:all .25s; padding:6px 0; }
-    .nav-a.active { color:var(--teal); }
-    .nav-a.active .nav-ic { transform:scale(1.15); filter:drop-shadow(0 0 8px var(--teal)); }
-    .nav-ic { font-size:22px; transition:all .25s; }
-    .nav-lb { font-size:10px; font-weight:700; letter-spacing:.5px; }
-
-    /* pull-to-refresh hint */
-    .refresh-hint {
-      text-align:center; padding:6px 0 0;
-      font-size:10px; color:var(--mt2); font-weight:600; letter-spacing:.5px;
-    }
-  </style>
+/* ── BOTTOM NAV ── */
+.bot-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(11,12,23,.9);
+  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  border-top: 1px solid var(--border2);
+  padding: 8px 0 calc(8px + var(--safe-bot));
+  display: flex; z-index: 100;
+}
+.nav-a {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  text-decoration: none; color: var(--txt3);
+  transition: all .2s; padding: 4px 0;
+}
+.nav-a.active { color: var(--blue); }
+.nav-ic { font-size: 22px; transition: transform .2s; }
+.nav-a.active .nav-ic { transform: scale(1.15); }
+.nav-lb {
+  font-size: 10px; font-weight: 800;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+</style>
 </head>
 <body>
+<div class="wrap">
+  <div class="safe-top"></div>
 
-<!-- STICKY HEADER -->
-<div class="hdr">
-  <div class="hdr-title">💰 My Wallet</div>
-  <button class="hdr-refresh" id="refreshBtn" onclick="refreshAll()" title="Refresh">⟳</button>
-</div>
+  <!-- HEADER -->
+  <div class="top-hdr">
+    <div class="page-title">💰 My Wallet</div>
+    <button class="refresh-btn" onclick="refresh()">⟳</button>
+  </div>
 
-<div class="pg">
-
-  <!-- VAULT CARD -->
-  <div class="vault rev r1">
-    <div class="vault-inner">
-      <div class="vault-top">
-        <div>
-          <div class="vault-lbl">Total Balance</div>
-          <div class="vault-total" id="vTotal"><span class="sk" style="width:140px;height:44px"></span></div>
-        </div>
-        <div class="live-dot"><span></span>LIVE</div>
+  <!-- BALANCE CARD -->
+  <div class="bal-card">
+    <div class="bal-top">
+      <div class="bal-lbl">Total Balance</div>
+      <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+    </div>
+    <div class="total-balance"><span class="sym">₹</span><span id="totalBalance">0.00</span></div>
+    <div class="bal-split">
+      <div class="bal-box">
+        <div class="bal-box-lbl">Wallet</div>
+        <div class="bal-box-val" id="walletBalance">₹0.00</div>
+        <div class="bal-box-hint">✓ Withdrawable</div>
       </div>
-
-      <div class="vault-split">
-        <div class="vsplit-box wallet">
-          <div class="vsplit-lbl">Wallet</div>
-          <div class="vsplit-val w" id="vWallet">₹0.00</div>
-          <div class="vsplit-note">✓ Withdrawable</div>
-        </div>
-        <div class="vsplit-box bonus">
-          <div class="vsplit-lbl">Bonus</div>
-          <div class="vsplit-val b" id="vBonus">₹0.00</div>
-          <div class="vsplit-note">🎮 Games only</div>
-        </div>
+      <div class="bal-box bonus">
+        <div class="bal-box-lbl">Bonus</div>
+        <div class="bal-box-val" id="bonusBalance">₹0.00</div>
+        <div class="bal-box-hint">⚡ Games only</div>
       </div>
-
-      <div class="vault-bar-row">
-        <div class="vault-bar-lbl">Wallet %</div>
-        <div class="vault-bar"><div class="vault-bar-fill" id="vBarFill"></div></div>
-        <div class="vault-bar-pct" id="vBarPct">0%</div>
+    </div>
+    <div class="wallet-pct-row">
+      <div class="pct-lbl">Wallet %</div>
+      <div class="pct-bar-wrap">
+        <div class="pct-bar-fill" id="pctBar" style="width:0%"></div>
       </div>
+      <div class="pct-val" id="pctVal">0%</div>
     </div>
   </div>
 
   <!-- ACTION BUTTONS -->
-  <div class="action-row rev r2">
-    <a href="deposit.html" class="act-btn dep">
-      <span class="aico">💳</span><span class="albl">Deposit</span>
+  <div class="action-row">
+    <a href="deposit.html" class="act-btn deposit">
+      <span class="act-btn-icon">💳</span> Deposit
     </a>
-    <a href="withdraw.html" class="act-btn wd">
-      <span class="aico">💸</span><span class="albl">Withdraw</span>
+    <a href="withdraw.html" class="act-btn withdraw">
+      <span class="act-btn-icon">💸</span> Withdraw
     </a>
   </div>
 
   <!-- QUICK LINKS -->
-  <div class="qlinks rev r2">
-    <a href="deposit-history.html" class="qlink">
-      <span class="qi">📥</span><span class="ql">Deposits</span>
+  <div class="quick-grid">
+    <a href="deposit.html" class="ql-btn g">
+      <div class="ql-icon">📥</div>
+      <div class="ql-lbl">Deposits</div>
     </a>
-    <a href="withdraw-history.html" class="qlink">
-      <span class="qi">📤</span><span class="ql">Withdrawals</span>
+    <a href="withdraw.html" class="ql-btn r">
+      <div class="ql-icon">📤</div>
+      <div class="ql-lbl">Withdrawals</div>
     </a>
-    <a href="withdraw-method.html" class="qlink">
-      <span class="qi">⚙️</span><span class="ql">Pay Method</span>
+    <a href="profile.html" class="ql-btn b">
+      <div class="ql-icon">⚙️</div>
+      <div class="ql-lbl">Pay Method</div>
     </a>
-    <a href="referral.html" class="qlink">
-      <span class="qi">🎁</span><span class="ql">Referral</span>
+    <a href="profile.html" class="ql-btn p">
+      <div class="ql-icon">🎁</div>
+      <div class="ql-lbl">Referral</div>
     </a>
   </div>
 
-  <!-- STATS STRIP -->
-  <div class="stats-strip rev r3">
-    <div class="sbox">
-      <div class="sbox-icon">🎯</div>
-      <div class="sbox-val" id="sWagered">₹0</div>
-      <div class="sbox-lbl">Wagered</div>
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-val" id="statWagered">₹0</div>
+      <div class="stat-lbl">Wagered</div>
     </div>
-    <div class="sbox">
-      <div class="sbox-icon">📥</div>
-      <div class="sbox-val" id="sDeposited">₹0</div>
-      <div class="sbox-lbl">Deposited</div>
+    <div class="stat-box">
+      <div class="stat-icon">💵</div>
+      <div class="stat-val" id="statDeposited">₹0</div>
+      <div class="stat-lbl">Deposited</div>
     </div>
-    <div class="sbox">
-      <div class="sbox-icon">👥</div>
-      <div class="sbox-val" id="sReferrals">0</div>
-      <div class="sbox-lbl">Referrals</div>
+    <div class="stat-box">
+      <div class="stat-icon">👥</div>
+      <div class="stat-val" id="statReferrals">0</div>
+      <div class="stat-lbl">Referrals</div>
     </div>
   </div>
 
-  <!-- TRANSACTION HISTORY -->
-  <div class="rev r4">
-    <!-- Tabs -->
-    <div class="tabs-wrap">
-      <button class="tab-btn on all" id="tabAll" onclick="setTab('all',this)">All</button>
-      <button class="tab-btn dep" id="tabDep" onclick="setTab('deposit',this)">Deposits</button>
-      <button class="tab-btn wd"  id="tabWd"  onclick="setTab('withdraw',this)">Withdrawals</button>
+  <!-- TABS -->
+  <div class="tabs-wrap">
+    <div class="tabs-seg">
+      <button class="seg-tab active" id="tabAll" onclick="switchTab('all',this)">All</button>
+      <button class="seg-tab" id="tabDep" onclick="switchTab('deposit',this)">Deposits</button>
+      <button class="seg-tab" id="tabWit" onclick="switchTab('withdraw',this)">Withdrawals</button>
     </div>
-
-    <!-- List -->
-    <div class="tx-list" id="txList">
-      <div class="tx-empty"><div class="ei">📊</div><p>Loading transactions…</p></div>
-    </div>
-
-    <div class="refresh-hint" id="txFooter"></div>
   </div>
 
+  <!-- TRANSACTIONS -->
+  <div class="tx-list" id="txList">
+    <div class="tx-empty">
+      <div class="tx-empty-icon">📊</div>
+      Loading transactions…
+    </div>
+  </div>
 </div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
 
 <!-- BOTTOM NAV -->
 <nav class="bot-nav">
-  <a href="home.html"    class="nav-a"><div class="nav-ic">🏠</div><div class="nav-lb">HOME</div></a>
-  <a href="game.html"    class="nav-a"><div class="nav-ic">🎮</div><div class="nav-lb">GAME</div></a>
-  <a href="wallet.html"  class="nav-a active"><div class="nav-ic">💰</div><div class="nav-lb">WALLET</div></a>
-  <a href="profile.html" class="nav-a"><div class="nav-ic">👤</div><div class="nav-lb">PROFILE</div></a>
+  <a href="home.html"    class="nav-a"><div class="nav-ic">🏠</div><div class="nav-lb">Home</div></a>
+  <a href="game.html"    class="nav-a"><div class="nav-ic">🎮</div><div class="nav-lb">Game</div></a>
+  <a href="wallet.html"  class="nav-a active"><div class="nav-ic">💰</div><div class="nav-lb">Wallet</div></a>
+  <a href="profile.html" class="nav-a"><div class="nav-ic">👤</div><div class="nav-lb">Profile</div></a>
 </nav>
 
-<script src="js/api.js"></script>
 <script>
-const BWAPI = 'https://color-game-backend1.onrender.com';
-if (!localStorage.getItem('token')) location.href = 'index.html';
-const tok = () => localStorage.getItem('token');
-const hdrs = () => ({ 'Authorization': `Bearer ${tok()}` });
+const API   = 'https://color-game-backend1.onrender.com';
+const token = localStorage.getItem('token');
+if (!token) location.href = 'index.html';
 
-let allDeposits = [], allWithdrawals = [], currentTab = 'all';
-let walletBal = 0, bonusBal = 0;
+let currentTab = 'all';
+let allDeposits = [], allWithdrawals = [];
 
-// ── TOAST ──
-function toast(msg, type='ok') {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = 'toast show ' + (type === 'err' ? 'err' : 'ok');
-  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2800);
+const fmt = n => '₹' + Math.abs(Number(n)||0).toLocaleString('en-IN');
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
 }
 
-// ── LOAD WALLET ──
-async function loadWallet() {
+async function loadWalletData() {
   try {
-    const r = await fetch(`${BWAPI}/wallet`, { headers: hdrs() });
-    if (r.status === 401) { localStorage.removeItem('token'); location.href='index.html'; return; }
-    if (!r.ok) throw new Error('API ' + r.status);
-    const d = await r.json();
+    const res = await fetch(`${API}/wallet`, { headers:{'Authorization':`Bearer ${token}`} });
+    if (!res.ok) return;
+    const data = await res.json();
 
-    walletBal = parseFloat(d.wallet  || 0);
-    bonusBal  = parseFloat(d.bonus   || 0);
-    const total   = walletBal + bonusBal;
-    const wagered = parseFloat(d.totalWagered  || 0);
-    const depAmt  = parseFloat(d.depositAmount || 0);
+    const wallet = Number(data.wallet) || 0;
+    const bonus  = Number(data.bonus)  || 0;
+    const total  = wallet + bonus;
 
-    // Vault
-    const vTotal = document.getElementById('vTotal');
-    vTotal.textContent = '₹' + total.toFixed(2);
-    vTotal.classList.add('counting');
-    setTimeout(() => vTotal.classList.remove('counting'), 300);
+    document.getElementById('totalBalance').textContent   = total.toFixed(2);
+    document.getElementById('walletBalance').textContent  = fmt(wallet);
+    document.getElementById('bonusBalance').textContent   = fmt(bonus);
 
-    document.getElementById('vWallet').textContent = '₹' + walletBal.toFixed(2);
-    document.getElementById('vBonus').textContent  = '₹' + bonusBal.toFixed(2);
+    const pct = total > 0 ? Math.round((wallet/total)*100) : 0;
+    document.getElementById('pctBar').style.width = pct + '%';
+    document.getElementById('pctVal').textContent = pct + '%';
 
-    // Progress bar: wallet % of total
-    const pct = total > 0 ? Math.round((walletBal / total) * 100) : 0;
-    setTimeout(() => {
-      document.getElementById('vBarFill').style.width = pct + '%';
-      document.getElementById('vBarPct').textContent  = pct + '%';
-    }, 200);
-
-    // Stats
-    document.getElementById('sWagered').textContent  = '₹' + (wagered >= 1000 ? (wagered/1000).toFixed(1)+'K' : wagered.toFixed(0));
-    document.getElementById('sDeposited').textContent = '₹' + (depAmt >= 1000  ? (depAmt/1000).toFixed(1)+'K'  : depAmt.toFixed(0));
-    document.getElementById('sReferrals').textContent = d.totalReferrals || 0;
-
-  } catch(e) {
-    console.error('Wallet error:', e);
-    toast('Failed to load balance', 'err');
-  }
+    // Stats from profile
+    if (data.totalWagered !== undefined) document.getElementById('statWagered').textContent   = fmt(data.totalWagered);
+    if (data.depositAmount !== undefined) document.getElementById('statDeposited').textContent = fmt(data.depositAmount);
+    if (data.referralCount !== undefined) document.getElementById('statReferrals').textContent = data.referralCount;
+  } catch(e) { console.error(e); }
 }
 
-// ── LOAD TRANSACTIONS ──
 async function loadTransactions() {
   try {
     const [dr, wr] = await Promise.all([
-      fetch(`${BWAPI}/wallet/deposit-history`,  { headers: hdrs() }),
-      fetch(`${BWAPI}/wallet/withdraw-history`, { headers: hdrs() })
+      fetch(`${API}/wallet/deposit-history`,  { headers:{'Authorization':`Bearer ${token}`} }),
+      fetch(`${API}/wallet/withdraw-history`, { headers:{'Authorization':`Bearer ${token}`} })
     ]);
-
-    allDeposits    = dr.ok ? (await dr.json()).map(d => ({ ...d, _type:'deposit'  })) : [];
-    allWithdrawals = wr.ok ? (await wr.json()).map(w => ({ ...w, _type:'withdraw' })) : [];
-
-    renderTx();
-  } catch(e) {
-    console.error('TX error:', e);
-    document.getElementById('txList').innerHTML = '<div class="tx-empty"><div class="ei">⚠️</div><p>Could not load transactions</p></div>';
-  }
+    allDeposits    = (await dr.json()).map(d => ({...d, type:'deposit'}));
+    allWithdrawals = (await wr.json()).map(w => ({...w, type:'withdraw'}));
+    renderTransactions();
+  } catch(e) { console.error(e); }
 }
 
-// ── RENDER TRANSACTIONS ──
-function renderTx() {
-  const list = document.getElementById('txList');
-  const footer = document.getElementById('txFooter');
+function renderTransactions() {
+  const all = [...allDeposits, ...allWithdrawals]
+    .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  let items = [];
-  if (currentTab === 'all')     items = [...allDeposits, ...allWithdrawals];
-  else if (currentTab === 'deposit')  items = [...allDeposits];
-  else                                items = [...allWithdrawals];
+  const filtered = all.filter(t => {
+    if (currentTab === 'all')     return true;
+    if (currentTab === 'deposit') return t.type === 'deposit';
+    return t.type === 'withdraw';
+  });
 
-  items.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  if (!items.length) {
-    const labels = { all:'transactions', deposit:'deposits', withdraw:'withdrawals' };
-    list.innerHTML = `<div class="tx-empty"><div class="ei">📊</div><p>No ${labels[currentTab]} yet</p></div>`;
-    footer.textContent = '';
+  const el = document.getElementById('txList');
+  if (!filtered.length) {
+    el.innerHTML = `<div class="tx-empty"><div class="tx-empty-icon">📊</div>No transactions yet</div>`;
     return;
   }
 
-  // Show only 15, with footer hint
-  const show = items.slice(0, 15);
-  footer.textContent = items.length > 15 ? `Showing 15 of ${items.length}` : `${items.length} transaction${items.length>1?'s':''}`;
+  el.innerHTML = filtered.map(t => {
+    const isDep = t.type === 'deposit';
+    const amt   = isDep ? `+${fmt(t.amount)}` : `-${fmt(t.amount)}`;
+    const st    = (t.status||'pending').toLowerCase();
+    const stCls = st === 'success' || st === 'approved' ? 's-success s-approved'
+                : st === 'pending'  ? 's-pending'
+                : 's-failed s-rejected';
+    const stLbl = t.status || 'PENDING';
 
-  const statusBadge = s => {
-    const st = (s||'').toLowerCase();
-    if (st === 'success' || st === 'approved' || st === 'completed') return '<span class="tx-badge tb-success">Done</span>';
-    if (st === 'pending') return '<span class="tx-badge tb-pending">Pending</span>';
-    return '<span class="tx-badge tb-failed">Failed</span>';
-  };
-
-  const fmtDate = d => new Date(d).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
-
-  list.innerHTML = show.map(t => {
-    const isDep = t._type === 'deposit';
-    const icon  = isDep ? '💳' : '💸';
-    const iconCls = isDep ? 'txi-dep' : 'txi-wd';
-    const title = isDep ? 'Deposit' : 'Withdrawal';
-    const sub   = isDep ? (t.method || 'Cashfree') : (t.method ? t.method.toUpperCase() : 'Bank');
-    const amt   = `${isDep ? '+' : '−'}₹${parseFloat(t.amount).toFixed(2)}`;
-    const amtCls = isDep ? 'pos' : 'neg';
-    return `<div class="tx-card">
-      <div class="tx-icon ${iconCls}">${icon}</div>
-      <div class="tx-body">
-        <div class="tx-title">${title}</div>
-        <div class="tx-sub">${sub} · ${fmtDate(t.createdAt)}</div>
+    return `<div class="tx-item">
+      <div class="tx-icon-wrap ${isDep?'dep':'wit'}">${isDep?'⬇️':'⬆️'}</div>
+      <div class="tx-info">
+        <div class="tx-type">${isDep ? 'Deposit' : 'Withdrawal'}</div>
+        <div class="tx-date">${fmtDate(t.createdAt)}</div>
       </div>
       <div class="tx-right">
-        <div class="tx-amt ${amtCls}">${amt}</div>
-        ${statusBadge(t.status)}
+        <div class="tx-amt ${isDep?'pos':'neg'}">${amt}</div>
+        <span class="tx-status ${stCls}">${stLbl}</span>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── TABS ──
-function setTab(tab, el) {
+function switchTab(tab, el) {
   currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  renderTx();
+  document.querySelectorAll('.seg-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTransactions();
 }
 
-// ── REFRESH ALL ──
-async function refreshAll() {
-  const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spin');
-  await Promise.all([loadWallet(), loadTransactions()]);
-  setTimeout(() => btn.classList.remove('spin'), 600);
-  toast('✓ Refreshed', 'ok');
+function refresh() {
+  loadWalletData();
+  loadTransactions();
 }
 
-// INIT
-loadWallet();
+loadWalletData();
 loadTransactions();
-// Auto-refresh every 12s
-setInterval(loadWallet, 12000);
+setInterval(loadWalletData, 12000);
 </script>
 </body>
 </html>
