@@ -1,474 +1,547 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referral Program - BIGWIN</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
-            min-height: 100vh;
-            padding: 20px;
-            padding-bottom: 100px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Referral Program — BIGWIN</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0b0c17;
+  --card:     rgba(255,255,255,0.07);
+  --card2:    rgba(255,255,255,0.04);
+  --glass:    rgba(255,255,255,0.09);
+  --border:   rgba(255,255,255,0.10);
+  --border2:  rgba(255,255,255,0.06);
+  --txt:      #f2f2f7;
+  --txt2:     rgba(242,242,247,0.55);
+  --txt3:     rgba(242,242,247,0.30);
+  --green:    #34c759;
+  --green-bg: rgba(52,199,89,0.12);
+  --green-bd: rgba(52,199,89,0.28);
+  --blue:     #007aff;
+  --blue-bg:  rgba(0,122,255,0.12);
+  --gold:     #ffd60a;
+  --gold-bg:  rgba(255,214,10,0.11);
+  --purple:   #af52de;
+  --purple-bg:rgba(175,82,222,0.12);
+  --orange:   #ff9f0a;
+  --red:      #ff3b5c;
+  --red-bg:   rgba(255,59,92,0.12);
+  --safe-top: env(safe-area-inset-top, 44px);
+  --safe-bot: env(safe-area-inset-bottom, 34px);
+}
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:antialiased; }
+body { font-family:'Nunito Sans',sans-serif; background:var(--bg); color:var(--txt); min-height:100dvh; overflow-x:hidden; padding-bottom:calc(90px + var(--safe-bot)); }
 
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 35% at 50% 0%, rgba(52,199,89,.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 15% 80%, rgba(0,122,255,.05) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 85% 60%, rgba(255,214,10,.04) 0%, transparent 55%);
+}
 
-        .back-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 18px;
-        }
+.wrap { max-width:430px; margin:0 auto; padding:0 16px; position:relative; z-index:1; }
+.safe-top { height:calc(var(--safe-top) + 8px); }
 
-        .header h1 {
-            color: white;
-            font-size: 24px;
-            margin: 0;
-        }
+/* ── TOP NAV ── */
+.top-nav { display:flex; align-items:center; gap:14px; padding:6px 0 22px; }
+.back-btn {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--card); border:1px solid var(--border);
+  display:grid; place-items:center; font-size:18px;
+  cursor:pointer; text-decoration:none; color:var(--txt); flex-shrink:0; transition:all .15s;
+}
+.back-btn:active { transform:scale(.88); }
+.nav-title { font-family:'Nunito',sans-serif; font-size:22px; font-weight:900; letter-spacing:-.3px; }
 
-        .referral-card {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.3);
-        }
+/* ── HERO REFERRAL CARD ── */
+.hero-card {
+  background:linear-gradient(145deg, #0b2214 0%, #0d2c18 40%, #081c10 100%);
+  border:1px solid var(--green-bd);
+  border-radius:28px; padding:24px 20px;
+  margin-bottom:14px;
+  position:relative; overflow:hidden;
+  box-shadow:0 16px 50px rgba(52,199,89,.2), 0 0 0 1px rgba(52,199,89,.08) inset;
+}
+.hero-card::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle, rgba(52,199,89,.15) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero-card::after {
+  content:''; position:absolute; bottom:-40px; left:-30px;
+  width:170px; height:170px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,122,255,.08) 0%, transparent 65%);
+  pointer-events:none;
+}
 
-        .referral-card h2 {
-            color: white;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
+.hero-lbl {
+  font-size:12px; font-weight:800; text-transform:uppercase;
+  letter-spacing:1.2px; color:rgba(52,199,89,.7); text-align:center;
+  margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:6px;
+}
 
-        .referral-code {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
+/* CODE DISPLAY */
+.code-box {
+  background:rgba(52,199,89,.12); border:1.5px solid var(--green-bd);
+  border-radius:20px; padding:18px 20px; text-align:center; margin-bottom:16px;
+  position:relative; z-index:1;
+}
+.code-text {
+  font-family:'Nunito',sans-serif;
+  font-size:32px; font-weight:900; letter-spacing:4px; color:#fff;
+  text-shadow:0 0 30px rgba(52,199,89,.4);
+}
+.code-sub { font-size:11px; color:rgba(52,199,89,.6); font-weight:700; margin-top:4px; letter-spacing:.5px; }
 
-        .code-text {
-            color: white;
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: 2px;
-        }
+/* ACTION BUTTONS */
+.code-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; position:relative; z-index:1; }
+.code-btn {
+  padding:14px 16px; border-radius:18px; border:none; cursor:pointer;
+  font-family:'Nunito',sans-serif; font-size:15px; font-weight:900;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:all .2s;
+}
+.code-btn:active { transform:scale(.93); }
+.code-btn.copy { background:#fff; color:#000; box-shadow:0 4px 16px rgba(255,255,255,.15); }
+.code-btn.share { background:var(--green); color:#000; box-shadow:0 6px 20px rgba(52,199,89,.35); }
 
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+/* REFERRAL LINK */
+.link-row {
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(255,255,255,.05); border:1px solid var(--border2);
+  border-radius:14px; padding:10px 14px; margin-top:12px;
+  position:relative; z-index:1;
+}
+.link-lbl { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--txt3); }
+.link-val { font-size:11px; color:var(--green); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px; }
+.link-copy {
+  padding:5px 12px; border-radius:10px; border:none;
+  background:var(--green-bg); color:var(--green);
+  font-size:11px; font-weight:800; cursor:pointer;
+  transition:all .15s; flex-shrink:0;
+}
+.link-copy:active { transform:scale(.9); }
 
-        .btn {
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+/* ── STATS ROW ── */
+.stats-row {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+  margin-bottom:14px;
+}
+.stat-tile {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:20px; padding:16px 10px; text-align:center;
+  backdrop-filter:blur(12px); position:relative; overflow:hidden;
+}
+.stat-tile::after {
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height:2px;
+}
+.st-ref::after  { background:var(--green); }
+.st-earn::after { background:var(--gold); }
+.st-team::after { background:var(--blue); }
 
-        .btn-copy {
-            background: white;
-            color: #16a34a;
-        }
+.stat-ic { font-size:22px; margin-bottom:6px; }
+.stat-val {
+  font-family:'Nunito',sans-serif;
+  font-size:22px; font-weight:900; line-height:1; margin-bottom:4px;
+}
+.st-ref .stat-val  { color:var(--green); }
+.st-earn .stat-val { color:var(--gold); }
+.st-team .stat-val { color:var(--blue); }
+.stat-lbl { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:var(--txt3); }
 
-        .btn-share {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
+/* ── HOW IT WORKS ── */
+.sec-hdr {
+  display:flex; align-items:center; gap:8px;
+  font-family:'Nunito',sans-serif; font-size:17px; font-weight:900;
+  margin-bottom:12px; padding-top:4px;
+}
+.sec-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+.steps-list {
+  display:flex; flex-direction:column; gap:0;
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:22px; overflow:hidden;
+  margin-bottom:14px; backdrop-filter:blur(12px);
+}
+.step-item {
+  display:flex; align-items:center; gap:14px;
+  padding:15px 16px; border-bottom:1px solid var(--border2);
+}
+.step-item:last-child { border:none; }
+.step-num {
+  width:38px; height:38px; border-radius:12px;
+  display:grid; place-items:center; font-size:16px; flex-shrink:0;
+}
+.step-body { flex:1; }
+.step-ttl { font-size:14px; font-weight:800; }
+.step-sub { font-size:11px; color:var(--txt3); font-weight:600; margin-top:2px; }
 
-        .stat-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 15px;
-            padding: 20px 15px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+/* ── COMMISSION LEVELS ── */
+.level-list {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:22px; overflow:hidden; margin-bottom:14px;
+  backdrop-filter:blur(12px);
+}
+.level-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; border-bottom:1px solid var(--border2);
+  transition:background .15s;
+}
+.level-item:last-child { border:none; }
+.level-item:active { background:rgba(255,255,255,.03); }
+.level-left { display:flex; align-items:center; gap:12px; }
+.level-badge {
+  width:36px; height:36px; border-radius:11px;
+  display:grid; place-items:center;
+  font-family:'Nunito',sans-serif; font-size:12px; font-weight:900; flex-shrink:0;
+}
+.l1 { background:rgba(52,199,89,.18); color:var(--green); border:1px solid rgba(52,199,89,.3); }
+.l2 { background:rgba(0,122,255,.15); color:var(--blue); border:1px solid rgba(0,122,255,.25); }
+.l3 { background:rgba(255,214,10,.13); color:var(--gold); border:1px solid rgba(255,214,10,.25); }
+.l4 { background:rgba(175,82,222,.15); color:var(--purple); border:1px solid rgba(175,82,222,.25); }
+.l5 { background:rgba(255,159,10,.13); color:var(--orange); border:1px solid rgba(255,159,10,.25); }
+.l6 { background:rgba(255,59,92,.12); color:var(--red); border:1px solid rgba(255,59,92,.2); }
 
-        .stat-value {
-            color: #22c55e;
-            font-size: 24px;
-            font-weight: 900;
-            margin-bottom: 5px;
-        }
+.level-info {}
+.level-rate { font-size:14px; font-weight:800; color:var(--txt); }
+.level-members { font-size:11px; color:var(--txt3); font-weight:600; margin-top:2px; }
+.level-right { text-align:right; }
+.level-earn {
+  font-family:'Nunito',sans-serif;
+  font-size:16px; font-weight:900; color:var(--green);
+}
+.level-earn.zero { color:var(--txt3); }
 
-        .stat-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-        }
+/* ── TEAM MEMBERS ── */
+.team-list {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:22px; overflow:hidden; margin-bottom:14px;
+  backdrop-filter:blur(12px);
+}
+.team-empty {
+  padding:40px 20px; text-align:center; color:var(--txt3);
+}
+.team-empty-ic { font-size:40px; opacity:.3; margin-bottom:10px; }
+.team-empty-tx { font-size:13px; font-weight:700; }
+.team-item {
+  display:flex; align-items:center; gap:14px;
+  padding:13px 16px; border-bottom:1px solid var(--border2);
+}
+.team-item:last-child { border:none; }
+.team-av {
+  width:40px; height:40px; border-radius:13px; flex-shrink:0;
+  background:linear-gradient(135deg, #1a2a1a, #0d2414);
+  border:1px solid rgba(52,199,89,.2);
+  display:grid; place-items:center; font-size:16px;
+}
+.team-info { flex:1; min-width:0; }
+.team-mobile { font-size:14px; font-weight:800; color:var(--txt); }
+.team-meta { font-size:11px; color:var(--txt3); font-weight:600; margin-top:2px; display:flex; gap:8px; flex-wrap:wrap; }
+.team-right { text-align:right; flex-shrink:0; }
+.team-level-badge {
+  display:inline-flex; padding:3px 10px; border-radius:8px;
+  font-size:11px; font-weight:800; text-transform:uppercase;
+  background:var(--green-bg); color:var(--green);
+  border:1px solid rgba(52,199,89,.2); margin-bottom:4px;
+}
+.team-dep { font-size:11px; font-weight:700; }
+.dep-yes { color:var(--green); }
+.dep-no  { color:var(--txt3); }
 
-        .commission-card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+/* ── PROMO BANNER ── */
+.promo-banner {
+  background:linear-gradient(135deg, rgba(255,214,10,.1), rgba(255,159,10,.08));
+  border:1px solid rgba(255,214,10,.25);
+  border-radius:22px; padding:18px 20px;
+  margin-bottom:14px;
+  display:flex; align-items:center; gap:16px;
+}
+.promo-ic { font-size:38px; flex-shrink:0; }
+.promo-body {}
+.promo-ttl { font-family:'Nunito',sans-serif; font-size:16px; font-weight:900; color:var(--gold); margin-bottom:4px; }
+.promo-sub { font-size:12px; color:var(--txt2); font-weight:600; line-height:1.4; }
 
-        .commission-card h3 {
-            color: white;
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
+/* ── TOAST ── */
+.toast {
+  position:fixed; top:calc(var(--safe-top) + 60px);
+  left:50%; transform:translateX(-50%) translateY(-8px);
+  background:rgba(28,28,30,.96); border:1px solid var(--border);
+  border-radius:20px; padding:12px 22px;
+  font-size:14px; font-weight:700; backdrop-filter:blur(20px);
+  opacity:0; transition:all .3s; z-index:500;
+  white-space:nowrap; pointer-events:none;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-        .level-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
+/* ── BOTTOM NAV ── */
+.bot-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  background:rgba(11,12,23,.9);
+  backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+  border-top:1px solid var(--border2);
+  padding:8px 0 calc(8px + var(--safe-bot));
+  display:flex; z-index:100;
+}
+.nav-a { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; color:var(--txt3); transition:all .2s; padding:4px 0; }
+.nav-a.active { color:var(--blue); }
+.nav-ic { font-size:22px; transition:transform .2s; }
+.nav-a.active .nav-ic { transform:scale(1.15); }
+.nav-lb { font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; }
 
-        .level-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .level-badge {
-            background: #22c55e;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .level-rate {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-
-        .level-stats {
-            text-align: right;
-        }
-
-        .level-count {
-            color: white;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .level-earnings {
-            color: #22c55e;
-            font-size: 12px;
-        }
-
-        .team-section {
-            margin-top: 30px;
-        }
-
-        .team-section h3 {
-            color: white;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
-
-        .team-member {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .member-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .member-mobile {
-            color: white;
-            font-weight: 600;
-        }
-
-        .member-level {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            padding: 2px 8px;
-            border-radius: 8px;
-            font-size: 11px;
-        }
-
-        .member-stats {
-            display: flex;
-            gap: 15px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #0f172a;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .nav-item {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            text-decoration: none;
-            font-size: 12px;
-        }
-
-        .nav-item.active {
-            color: #22c55e;
-        }
-    </style>
+/* ── CONFETTI ── */
+.conf { position:fixed; pointer-events:none; z-index:600; border-radius:2px; animation:confFall linear forwards; }
+@keyframes confFall { from{transform:translateY(-20px) rotate(0deg);opacity:1} to{transform:translateY(110vh) rotate(720deg);opacity:0} }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button class="back-btn" onclick="window.location.href='home.html'">←</button>
-            <h1>Referral Program</h1>
-        </div>
+<div class="wrap">
+  <div class="safe-top"></div>
 
-        <!-- Referral Code Card -->
-        <div class="referral-card">
-            <h2>🎁 Your Referral Code</h2>
-            <div class="referral-code">
-                <div class="code-text" id="referralCode">Loading...</div>
-            </div>
-            <div class="action-buttons">
-                <button class="btn btn-copy" onclick="copyCode()">📋 Copy Code</button>
-                <button class="btn btn-share" onclick="shareCode()">📤 Share</button>
-            </div>
-        </div>
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a href="profile.html" class="back-btn">‹</a>
+    <div class="nav-title">🎁 Referral Program</div>
+  </div>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value" id="totalReferrals">0</div>
-                <div class="stat-label">Total Referrals</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalEarnings">₹0</div>
-                <div class="stat-label">Total Earnings</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="teamMembers">0</div>
-                <div class="stat-label">Team Size</div>
-            </div>
-        </div>
+  <!-- HERO CARD -->
+  <div class="hero-card">
+    <div class="hero-lbl">🎁 Your Referral Code</div>
 
-        <!-- Commission Structure -->
-        <div class="commission-card">
-            <h3>💰 Commission Structure</h3>
-            <div id="levelBreakdown">
-                <!-- Levels will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Team Members -->
-        <div class="team-section">
-            <h3>👥 Your Team</h3>
-            <div id="teamList">
-                <p style="text-align: center; color: rgba(255, 255, 255, 0.5); padding: 20px;">
-                    No team members yet. Share your code to start earning!
-                </p>
-            </div>
-        </div>
+    <div class="code-box">
+      <div class="code-text" id="referralCode">Loading…</div>
+      <div class="code-sub">Share this code with friends</div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <a href="home.html" class="nav-item">🏠<br>Home</a>
-        <a href="game.html" class="nav-item">🎮<br>Game</a>
-        <a href="wallet.html" class="nav-item">💰<br>Wallet</a>
-        <a href="profile.html" class="nav-item">👤<br>Profile</a>
+    <div class="code-actions">
+      <button class="code-btn copy" onclick="copyCode()">📋 Copy Code</button>
+      <button class="code-btn share" onclick="shareCode()">🔗 Share</button>
     </div>
 
-    <script src="js/api.js"></script>
-    <script>
-        // Check authentication
-        if (!localStorage.getItem('token')) {
-            window.location.href = 'index.html';
-        }
+    <div class="link-row">
+      <div>
+        <div class="link-lbl">Referral Link</div>
+        <div class="link-val" id="refLink">—</div>
+      </div>
+      <button class="link-copy" onclick="copyLink()">Copy</button>
+    </div>
+  </div>
 
-        let referralCodeText = '';
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-tile st-ref">
+      <div class="stat-ic">👥</div>
+      <div class="stat-val" id="totalReferrals">0</div>
+      <div class="stat-lbl">Referrals</div>
+    </div>
+    <div class="stat-tile st-earn">
+      <div class="stat-ic">💰</div>
+      <div class="stat-val" id="totalEarnings">₹0</div>
+      <div class="stat-lbl">Earnings</div>
+    </div>
+    <div class="stat-tile st-team">
+      <div class="stat-ic">🌐</div>
+      <div class="stat-val" id="teamMembers">0</div>
+      <div class="stat-lbl">Team Size</div>
+    </div>
+  </div>
 
-        // Load referral info
-        async function loadReferralInfo() {
-            try {
-                const token = localStorage.getItem('token');
-                
-                const res = await fetch(`${API}/referral/info`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+  <!-- PROMO BANNER -->
+  <div class="promo-banner">
+    <div class="promo-ic">🏆</div>
+    <div class="promo-body">
+      <div class="promo-ttl">Earn on Every Bet!</div>
+      <div class="promo-sub">Get 0.1% commission on every bet your referrals and their team place — across 6 levels deep!</div>
+    </div>
+  </div>
 
-                const data = await res.json();
+  <!-- HOW IT WORKS -->
+  <div class="sec-hdr"><div class="sec-dot" style="background:var(--blue)"></div>How It Works</div>
+  <div class="steps-list">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--blue-bg)">📤</div>
+      <div class="step-body">
+        <div class="step-ttl">Share Your Code</div>
+        <div class="step-sub">Send your unique referral code or link to friends</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--green-bg)">✅</div>
+      <div class="step-body">
+        <div class="step-ttl">Friend Signs Up</div>
+        <div class="step-sub">They register using your code and make a deposit</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--gold-bg)">💸</div>
+      <div class="step-body">
+        <div class="step-ttl">Earn Commission</div>
+        <div class="step-sub">Get 0.1% of every bet they place, automatically</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--purple-bg)">♾️</div>
+      <div class="step-body">
+        <div class="step-ttl">6 Levels Deep</div>
+        <div class="step-sub">Earn from your referrals' referrals, up to 6 levels!</div>
+      </div>
+    </div>
+  </div>
 
-                if (res.ok) {
-                    // Store code for sharing
-                    referralCodeText = data.referralCode;
-                    
-                    // Update UI
-                    document.getElementById('referralCode').textContent = data.referralCode;
-                    document.getElementById('totalReferrals').textContent = data.totalReferrals || 0;
-                    document.getElementById('totalEarnings').textContent = `₹${parseFloat(data.totalEarnings || 0).toFixed(0)}`;
-                    document.getElementById('teamMembers').textContent = data.allTeamMembers || 0;
+  <!-- COMMISSION STRUCTURE -->
+  <div class="sec-hdr"><div class="sec-dot" style="background:var(--gold)"></div>Commission Structure</div>
+  <div class="level-list" id="levelBreakdown">
+    <!-- filled by JS -->
+  </div>
 
-                    // Load level breakdown
-                    loadLevelBreakdown(data.levelBreakdown);
+  <!-- TEAM MEMBERS -->
+  <div class="sec-hdr"><div class="sec-dot" style="background:var(--green)"></div>Your Team</div>
+  <div class="team-list" id="teamList">
+    <div class="team-empty">
+      <div class="team-empty-ic">👥</div>
+      <div class="team-empty-tx">No team members yet.<br>Share your code to start earning!</div>
+    </div>
+  </div>
 
-                    // Load team members
-                    loadTeamMembers(data.teamMembers);
-                }
-            } catch (err) {
-                console.error('Referral info load error:', err);
-            }
-        }
+</div>
 
-        // Load level breakdown - ✅ UPDATED WITH HALVED COMMISSION RATES
-        function loadLevelBreakdown(breakdown) {
-            const container = document.getElementById('levelBreakdown');
-            
-            // ✅ FIX: Updated commission rates (halved)
-            const levels = [
-                { level: 1, rate: '0.1%' },      // 0.1%
-                { level: 2, rate: '0.1%' },    // 0.1%
-                { level: 3, rate: '0.1%' },    // 0.1%
-                { level: 4, rate: '0.1%' },      //0.1%
-                { level: 5, rate: '0.1%' },    // 0.1%
-                { level: 6, rate: '0.1%' }     //0.1%
-            ];
+<div class="toast" id="toast"></div>
 
-            container.innerHTML = levels.map(l => {
-                const levelData = breakdown[`level${l.level}`] || { count: 0, earnings: 0 };
-                
-                return `
-                    <div class="level-item">
-                        <div class="level-info">
-                            <span class="level-badge">L${l.level}</span>
-                            <span class="level-rate">${l.rate} Commission</span>
-                        </div>
-                        <div class="level-stats">
-                            <div class="level-count">${levelData.count} members</div>
-                            <div class="level-earnings">₹${levelData.earnings.toFixed(2)}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+<!-- BOTTOM NAV -->
+<nav class="bot-nav">
+  <a href="home.html"    class="nav-a"><div class="nav-ic">🏠</div><div class="nav-lb">Home</div></a>
+  <a href="game.html"    class="nav-a"><div class="nav-ic">🎮</div><div class="nav-lb">Game</div></a>
+  <a href="wallet.html"  class="nav-a"><div class="nav-ic">💰</div><div class="nav-lb">Wallet</div></a>
+  <a href="profile.html" class="nav-a active"><div class="nav-ic">👤</div><div class="nav-lb">Profile</div></a>
+</nav>
 
-        // Load team members
-        function loadTeamMembers(members) {
-            if (!members || members.length === 0) return;
+<script>
+const API   = 'https://color-game-backend1.onrender.com';
+const token = localStorage.getItem('token');
+if (!token) location.href = 'index.html';
 
-            const container = document.getElementById('teamList');
-            
-            container.innerHTML = members.slice(0, 20).map(member => `
-                <div class="team-member">
-                    <div class="member-header">
-                        <span class="member-mobile">${member.mobile.substring(0, 4)}****${member.mobile.substring(8)}</span>
-                        <span class="member-level">Level ${member.level}</span>
-                    </div>
-                    <div class="member-stats">
-                        <span>Deposited: ${member.deposited ? '✅' : '❌'}</span>
-                        <span>Wagered: ₹${member.totalWagered.toFixed(2)}</span>
-                        <span>Joined: ${new Date(member.joinedAt).toLocaleDateString()}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
+let referralCodeText = '';
 
-        // Copy referral code
-        function copyCode() {
-            navigator.clipboard.writeText(referralCodeText).then(() => {
-                alert('✅ Referral code copied: ' + referralCodeText);
-            }).catch(() => {
-                // Fallback
-                const input = document.createElement('input');
-                input.value = referralCodeText;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
-                alert('✅ Referral code copied: ' + referralCodeText);
-            });
-        }
+function toast(msg) {
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2500);
+}
 
-        // ✅ FIX #1: Share code WITH referral code in the URL
-        function shareCode() {
-            // ✅ Get current website URL
-            const baseUrl = window.location.origin;
-            
-            // ✅ Create registration link with referral code as query parameter
-            const referralLink = `${baseUrl}/index.html?ref=${referralCodeText}`;
-            
-            const text = `🎮 Join BIGWIN and start winning!
+function confetti() {
+  const cols=['#34c759','#007aff','#ffd60a','#ff3b5c','#af52de','#fff'];
+  for(let i=0;i<45;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div'); el.className='conf';
+      el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*2+2}s;width:${Math.random()*8+4}px;height:${Math.random()*8+4}px;transform:rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el); setTimeout(()=>el.remove(),4000);
+    },i*30);
+  }
+}
 
-💰 Use my referral code: ${referralCodeText}
+async function loadReferralInfo() {
+  try {
+    const res = await fetch(`${API}/referral/info`, { headers:{'Authorization':`Bearer ${token}`} });
+    if (!res.ok) return;
+    const d = await res.json();
 
+    referralCodeText = d.referralCode || '';
+    const baseUrl = window.location.origin;
+    const refLink = `${baseUrl}/index.html?ref=${referralCodeText}`;
 
+    document.getElementById('referralCode').textContent = referralCodeText || '—';
+    document.getElementById('refLink').textContent      = refLink;
+    document.getElementById('totalReferrals').textContent = d.totalReferrals || 0;
+    document.getElementById('totalEarnings').textContent  = '₹' + parseFloat(d.totalEarnings||0).toFixed(0);
+    document.getElementById('teamMembers').textContent    = d.allTeamMembers || 0;
 
-📲 Sign up now: ${referralLink}`;
+    buildLevels(d.levelBreakdown || {});
+    buildTeam(d.teamMembers || []);
+  } catch(e) { console.error(e); }
+}
 
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Join BIGWIN',
-                    text: text
-                }).catch(() => {
-                    copyToClipboard(text);
-                });
-            } else {
-                copyToClipboard(text);
-            }
-        }
+const LEVEL_COLORS = ['l1','l2','l3','l4','l5','l6'];
 
-        // Helper function to copy full message
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('✅ Referral link copied to clipboard!');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                alert('✅ Referral link copied to clipboard!');
-            });
-        }
+function buildLevels(breakdown) {
+  const levels = [1,2,3,4,5,6];
+  document.getElementById('levelBreakdown').innerHTML = levels.map(l => {
+    const data    = breakdown[`level${l}`] || { count:0, earnings:0 };
+    const clsCode = LEVEL_COLORS[l-1];
+    const earn    = parseFloat(data.earnings||0);
+    return `<div class="level-item">
+      <div class="level-left">
+        <div class="level-badge ${clsCode}">L${l}</div>
+        <div class="level-info">
+          <div class="level-rate">0.1% Commission</div>
+          <div class="level-members">${data.count} member${data.count!==1?'s':''}</div>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-earn ${earn===0?'zero':''}">₹${earn.toFixed(2)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-        // Load data
-        loadReferralInfo();
-    </script>
+function buildTeam(members) {
+  const el = document.getElementById('teamList');
+  if (!members.length) return;
+  el.innerHTML = members.slice(0,20).map(m => {
+    const masked = m.mobile.substring(0,4)+'****'+m.mobile.substring(8);
+    return `<div class="team-item">
+      <div class="team-av">👤</div>
+      <div class="team-info">
+        <div class="team-mobile">${masked}</div>
+        <div class="team-meta">
+          <span>Level ${m.level}</span>
+          <span>Wagered: ₹${parseFloat(m.totalWagered||0).toFixed(0)}</span>
+          <span>${new Date(m.joinedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
+        </div>
+      </div>
+      <div class="team-right">
+        <div class="team-level-badge">L${m.level}</div>
+        <div class="team-dep ${m.deposited?'dep-yes':'dep-no'}">${m.deposited?'✓ Deposited':'✗ Not yet'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyCode() {
+  if (!referralCodeText) { toast('⚠ Code not loaded yet'); return; }
+  navigator.clipboard.writeText(referralCodeText)
+    .catch(()=>{ const t=document.createElement('textarea');t.value=referralCodeText;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t); });
+  toast('✅ Referral code copied!');
+  confetti();
+}
+
+function copyLink() {
+  const link = document.getElementById('refLink').textContent;
+  navigator.clipboard.writeText(link)
+    .catch(()=>{ const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t); });
+  toast('✅ Referral link copied!');
+}
+
+function shareCode() {
+  if (!referralCodeText) { toast('⚠ Code not loaded yet'); return; }
+  const baseUrl = window.location.origin;
+  const refLink = `${baseUrl}/index.html?ref=${referralCodeText}`;
+  const text = `🎮 Join BIGWIN and start winning!\n\n💰 Use my referral code: ${referralCodeText}\n\n📲 Sign up: ${refLink}`;
+
+  if (navigator.share) {
+    navigator.share({ title:'Join BIGWIN', text }).catch(()=>{ navigator.clipboard.writeText(text); toast('✅ Copied to clipboard!'); });
+  } else {
+    navigator.clipboard.writeText(text).then(()=>toast('✅ Share text copied!')).catch(()=>toast('❌ Could not copy'));
+  }
+}
+
+loadReferralInfo();
+</script>
 </body>
 </html>
