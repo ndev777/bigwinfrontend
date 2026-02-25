@@ -1,519 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Withdrawal Method - BIGWIN</title>
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Withdrawal Method — BIGWIN</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0b0c17;
+  --card:      rgba(255,255,255,0.07);
+  --card2:     rgba(255,255,255,0.04);
+  --glass:     rgba(255,255,255,0.09);
+  --border:    rgba(255,255,255,0.10);
+  --border2:   rgba(255,255,255,0.06);
+  --txt:       #f2f2f7;
+  --txt2:      rgba(242,242,247,0.55);
+  --txt3:      rgba(242,242,247,0.30);
+  --green:     #34c759;
+  --green-bg:  rgba(52,199,89,0.12);
+  --green-bd:  rgba(52,199,89,0.28);
+  --blue:      #007aff;
+  --blue-bg:   rgba(0,122,255,0.12);
+  --blue-bd:   rgba(0,122,255,0.28);
+  --purple:    #af52de;
+  --purple-bg: rgba(175,82,222,0.12);
+  --purple-bd: rgba(175,82,222,0.28);
+  --gold:      #ffd60a;
+  --gold-bg:   rgba(255,214,10,0.10);
+  --red:       #ff3b5c;
+  --red-bg:    rgba(255,59,92,0.12);
+  --safe-top:  env(safe-area-inset-top, 44px);
+  --safe-bot:  env(safe-area-inset-bottom, 34px);
+}
 
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:antialiased; }
+body { font-family:'Nunito Sans',sans-serif; background:var(--bg); color:var(--txt); min-height:100dvh; overflow-x:hidden; padding-bottom:calc(40px + var(--safe-bot)); }
 
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 30% at 20% 5%, rgba(0,122,255,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 80% 85%, rgba(52,199,89,.05) 0%, transparent 55%);
+}
 
-        .back-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 18px;
-        }
+.wrap { max-width:430px; margin:0 auto; padding:0 16px; position:relative; z-index:1; }
+.safe-top { height:calc(var(--safe-top) + 8px); }
 
-        .header h1 {
-            color: white;
-            font-size: 24px;
-            margin: 0;
-        }
+/* ── TOP NAV ── */
+.top-nav { display:flex; align-items:center; gap:14px; padding:6px 0 24px; }
+.back-btn {
+  width:36px; height:36px; border-radius:50%;
+  background:var(--card); border:1px solid var(--border);
+  display:grid; place-items:center; font-size:18px;
+  cursor:pointer; text-decoration:none; color:var(--txt);
+  flex-shrink:0; transition:all .15s;
+}
+.back-btn:active { transform:scale(.88); }
+.nav-title { font-family:'Nunito',sans-serif; font-size:22px; font-weight:900; letter-spacing:-.3px; }
 
-        .card {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+/* ── CURRENT METHOD CARD ── */
+.current-card {
+  background:var(--green-bg); border:1px solid var(--green-bd);
+  border-radius:22px; padding:16px 18px;
+  margin-bottom:16px; display:none;
+  align-items:center; gap:14px;
+}
+.current-card.show { display:flex; }
+.current-ic { font-size:28px; flex-shrink:0; }
+.current-body { flex:1; min-width:0; }
+.current-lbl { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--green); margin-bottom:4px; opacity:.7; }
+.current-val { font-size:15px; font-weight:800; color:var(--green); word-break:break-all; }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
+/* ── METHOD SELECTOR ── */
+.method-seg {
+  display:flex; background:rgba(255,255,255,.06);
+  border-radius:18px; padding:5px; gap:3px;
+  margin-bottom:20px;
+}
+.m-tab {
+  flex:1; padding:12px 8px; border:none; border-radius:14px;
+  background:none; color:var(--txt3);
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:900;
+  cursor:pointer; transition:all .25s;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.m-tab-ic { font-size:20px; }
+.m-tab.active.upi    { background:var(--green-bg); color:var(--green); border:1px solid var(--green-bd); }
+.m-tab.active.bank   { background:var(--blue-bg);  color:var(--blue);  border:1px solid var(--blue-bd); }
+.m-tab.active.usdt   { background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd); }
+.m-tab:not(.active):hover { background:rgba(255,255,255,.05); }
 
-        .tab {
-            flex: 1;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            border-radius: 10px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+/* ── INFO BANNER ── */
+.info-banner {
+  border-radius:18px; padding:14px 16px;
+  margin-bottom:18px; display:flex; align-items:flex-start; gap:12px;
+}
+.info-banner.upi  { background:var(--green-bg); border:1px solid var(--green-bd); }
+.info-banner.bank { background:var(--blue-bg);  border:1px solid var(--blue-bd); }
+.info-banner.usdt { background:var(--purple-bg);border:1px solid var(--purple-bd); }
+.info-ic { font-size:20px; flex-shrink:0; margin-top:1px; }
+.info-txt { font-size:13px; font-weight:700; line-height:1.5; }
+.info-banner.upi  .info-txt { color:var(--green); }
+.info-banner.bank .info-txt { color:var(--blue); }
+.info-banner.usdt .info-txt { color:var(--purple); }
 
-        .tab.active {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-        }
+/* ── FORM CARD ── */
+.form-card {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:24px; padding:20px;
+  margin-bottom:16px; backdrop-filter:blur(16px);
+}
+.form-group { margin-bottom:16px; }
+.form-group:last-child { margin-bottom:0; }
+.fg-label {
+  font-size:11px; font-weight:800; text-transform:uppercase;
+  letter-spacing:1px; color:var(--txt3); margin-bottom:8px;
+  display:block;
+}
 
-        .method-content {
-            display: none;
-        }
+.fg-input {
+  width:100%; padding:15px 16px;
+  background:rgba(255,255,255,.06); border:1.5px solid var(--border);
+  border-radius:14px; color:var(--txt);
+  font-family:'Nunito Sans',sans-serif; font-size:16px; font-weight:700;
+  outline:none; transition:border-color .2s, background .2s;
+  -webkit-appearance:none;
+}
+.fg-input::placeholder { color:var(--txt3); font-weight:600; }
+.fg-input:focus { border-color:rgba(0,122,255,.5); background:rgba(0,122,255,.04); }
+.fg-input.err { border-color:rgba(255,59,92,.5); background:var(--red-bg); }
+.fg-input.ok  { border-color:rgba(52,199,89,.5); background:var(--green-bg); }
 
-        .method-content.active {
-            display: block;
-        }
+.fg-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.field-hint { font-size:11px; font-weight:600; color:var(--txt3); margin-top:6px; padding-left:2px; }
+.field-hint.err { color:var(--red); }
+.field-hint.ok  { color:var(--green); }
 
-        .form-group label {
-            display: block;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+/* ── NETWORK PILLS ── */
+.network-row { display:flex; gap:8px; margin-top:10px; }
+.net-pill {
+  padding:8px 16px; border-radius:12px;
+  font-family:'Nunito',sans-serif; font-size:13px; font-weight:800;
+  cursor:pointer; transition:all .15s; border:1.5px solid var(--border2);
+  background:var(--card2); color:var(--txt3);
+}
+.net-pill.active {
+  background:var(--purple-bg); border-color:var(--purple-bd);
+  color:var(--purple);
+}
+.net-pill:active { transform:scale(.93); }
 
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
+/* ── SAVE BUTTON ── */
+.save-btn {
+  width:100%; padding:18px; border:none; border-radius:20px;
+  font-family:'Nunito',sans-serif; font-size:18px; font-weight:900;
+  cursor:pointer; transition:all .2s; letter-spacing:-.2px;
+}
+.save-btn:active { transform:scale(.96); }
+.save-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+.save-btn.upi  { background:linear-gradient(135deg,#34c759,#1a9e3f); color:#fff; box-shadow:0 10px 30px rgba(52,199,89,.35); }
+.save-btn.bank { background:linear-gradient(135deg,#007aff,#0055d4); color:#fff; box-shadow:0 10px 30px rgba(0,122,255,.3); }
+.save-btn.usdt { background:linear-gradient(135deg,#af52de,#7c3aed); color:#fff; box-shadow:0 10px 30px rgba(175,82,222,.3); }
 
-        .form-group input:focus {
-            outline: none;
-            border-color: #22c55e;
-            background: rgba(255, 255, 255, 0.08);
-        }
+/* ── METHOD PANELS ── */
+.method-panel { display:none; }
+.method-panel.active { display:block; }
 
-        .validation-msg {
-            font-size: 12px;
-            margin-top: 6px;
-            min-height: 18px;
-        }
+/* ── TOAST ── */
+.toast {
+  position:fixed; top:calc(var(--safe-top) + 60px);
+  left:50%; transform:translateX(-50%) translateY(-8px);
+  background:rgba(28,28,30,.96); border:1px solid var(--border);
+  border-radius:20px; padding:12px 20px;
+  font-size:14px; font-weight:700; backdrop-filter:blur(20px);
+  opacity:0; transition:all .3s; z-index:500;
+  white-space:nowrap; pointer-events:none;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-        .error-msg {
-            color: #ef4444;
-        }
-
-        .success-msg {
-            color: #22c55e;
-        }
-
-        .info-box {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .info-box p {
-            color: #22c55e;
-            font-size: 13px;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .current-method {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .current-method h3 {
-            color: white;
-            font-size: 14px;
-            margin: 0 0 10px 0;
-        }
-
-        .current-method p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 13px;
-            margin: 5px 0;
-        }
-    </style>
+/* ── SUCCESS SHEET ── */
+.sheet-ov {
+  position:fixed; inset:0; z-index:300;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
+  opacity:0; transition:opacity .3s; pointer-events:none;
+  display:flex; align-items:flex-end;
+}
+.sheet-ov.show { opacity:1; pointer-events:all; }
+.sheet {
+  width:100%; max-width:430px; margin:0 auto;
+  background:linear-gradient(180deg,#071510,#040f0a);
+  border:1px solid rgba(52,199,89,.3);
+  border-radius:30px 30px 0 0;
+  padding:0 20px calc(36px + var(--safe-bot));
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.34,1.1,.64,1);
+  box-shadow:0 -20px 60px rgba(52,199,89,.15);
+}
+.sheet-ov.show .sheet { transform:translateY(0); }
+.sheet-handle { width:36px; height:4px; background:rgba(255,255,255,.15); border-radius:2px; margin:14px auto 28px; }
+.sheet-emoji { font-size:64px; text-align:center; margin-bottom:12px; animation:emoIn .5s cubic-bezier(.34,1.4,.64,1); }
+@keyframes emoIn { from{transform:scale(0) rotate(-15deg)} to{transform:scale(1) rotate(0deg)} }
+.sheet-title { font-family:'Nunito',sans-serif; font-size:26px; font-weight:900; text-align:center; color:var(--green); margin-bottom:8px; }
+.sheet-sub { font-size:14px; color:var(--txt2); text-align:center; line-height:1.5; margin-bottom:28px; }
+.sheet-btn {
+  width:100%; padding:17px; border:none; border-radius:18px;
+  background:linear-gradient(135deg,#34c759,#1a9e3f); color:#fff;
+  font-family:'Nunito',sans-serif; font-size:17px; font-weight:900;
+  cursor:pointer; box-shadow:0 8px 25px rgba(52,199,89,.4); transition:transform .15s;
+}
+.sheet-btn:active { transform:scale(.96); }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button class="back-btn" onclick="window.location.href='withdraw.html'">←</button>
-            <h1>Withdrawal Method</h1>
-        </div>
+<div class="wrap">
+  <div class="safe-top"></div>
 
-        <div class="card">
-            <div id="currentMethodDisplay" class="current-method" style="display: none;">
-                <h3>Current Method</h3>
-                <p id="currentMethodText">Not set</p>
-            </div>
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <a href="withdraw.html" class="back-btn">‹</a>
+    <div class="nav-title">Withdrawal Method</div>
+  </div>
 
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('upi')">UPI</button>
-                <button class="tab" onclick="switchTab('bank')">Bank</button>
-                <button class="tab" onclick="switchTab('usdt')">USDT</button>
-            </div>
-
-            <!-- UPI METHOD -->
-            <div id="upiMethod" class="method-content active">
-                <div class="info-box">
-                    <p>💳 Enter your UPI ID to receive withdrawals instantly. Format: yourname@bankname</p>
-                </div>
-
-                <form id="upiForm" onsubmit="handleSave(event, 'upi')">
-                    <div class="form-group">
-                        <label>UPI ID</label>
-                        <input 
-                            type="text" 
-                            id="upiId" 
-                            placeholder="example@paytm"
-                            required
-                        >
-                        <div class="validation-msg" id="upiError"></div>
-                    </div>
-
-                    <button type="submit" class="btn-primary" id="upiBtn">
-                        Save UPI Method
-                    </button>
-                </form>
-            </div>
-
-            <!-- BANK METHOD -->
-            <div id="bankMethod" class="method-content">
-                <div class="info-box">
-                    <p>🏦 Enter your bank account details for withdrawals. Processing takes 1-3 business days.</p>
-                </div>
-
-                <form id="bankForm" onsubmit="handleSave(event, 'bank')">
-                    <div class="form-group">
-                        <label>Account Holder Name</label>
-                        <input 
-                            type="text" 
-                            id="accountHolder" 
-                            placeholder="Enter full name as per bank"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label>Account Number</label>
-                        <input 
-                            type="text" 
-                            id="accountNumber" 
-                            placeholder="Enter account number"
-                            maxlength="18"
-                            required
-                        >
-                        <div class="validation-msg" id="accountError"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>IFSC Code</label>
-                        <input 
-                            type="text" 
-                            id="ifscCode" 
-                            placeholder="e.g., SBIN0001234"
-                            maxlength="11"
-                            style="text-transform: uppercase;"
-                            required
-                        >
-                        <div class="validation-msg" id="ifscError"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Bank Name</label>
-                        <input 
-                            type="text" 
-                            id="bankName" 
-                            placeholder="e.g., State Bank of India"
-                            required
-                        >
-                    </div>
-
-                    <button type="submit" class="btn-primary" id="bankBtn">
-                        Save Bank Method
-                    </button>
-                </form>
-            </div>
-
-            <!-- USDT METHOD -->
-            <div id="usdtMethod" class="method-content">
-                <div class="info-box">
-                    <p>💰 Enter your USDT wallet address. Only TRC20 network supported.</p>
-                </div>
-
-                <form id="usdtForm" onsubmit="handleSave(event, 'usdt')">
-                    <div class="form-group">
-                        <label>USDT Wallet Address (TRC20)</label>
-                        <input 
-                            type="text" 
-                            id="walletAddress" 
-                            placeholder="Enter TRC20 wallet address"
-                            required
-                        >
-                        <div class="validation-msg" id="usdtError"></div>
-                    </div>
-
-                    <button type="submit" class="btn-primary" id="usdtBtn">
-                        Save USDT Method
-                    </button>
-                </form>
-            </div>
-        </div>
+  <!-- CURRENT METHOD (shown when saved) -->
+  <div class="current-card" id="currentCard">
+    <div class="current-ic" id="currentIc">💳</div>
+    <div class="current-body">
+      <div class="current-lbl">✓ Current Method</div>
+      <div class="current-val" id="currentVal">—</div>
     </div>
+  </div>
 
-    <script src="js/api.js"></script>
-    <script>
-        // Switch tabs
-        function switchTab(method) {
-            // Update tab buttons
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+  <!-- METHOD TABS -->
+  <div class="method-seg">
+    <button class="m-tab upi active" id="tabUpi" onclick="switchTab('upi')">
+      <span class="m-tab-ic">📱</span> UPI
+    </button>
+    <button class="m-tab bank" id="tabBank" onclick="switchTab('bank')">
+      <span class="m-tab-ic">🏦</span> Bank
+    </button>
+    <button class="m-tab usdt" id="tabUsdt" onclick="switchTab('usdt')">
+      <span class="m-tab-ic">₮</span> USDT
+    </button>
+  </div>
 
-            // Update method content
-            document.querySelectorAll('.method-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(`${method}Method`).classList.add('active');
-        }
+  <!-- UPI PANEL -->
+  <div class="method-panel active" id="panelUpi">
+    <div class="info-banner upi">
+      <div class="info-ic">💳</div>
+      <div class="info-txt">Enter your UPI ID to receive withdrawals instantly. Format: yourname@bankname</div>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label class="fg-label" for="upiId">UPI ID</label>
+        <input class="fg-input" type="text" id="upiId" placeholder="example@paytm" autocomplete="off" oninput="validateUpi()">
+        <div class="field-hint" id="upiHint">Enter your UPI VPA address</div>
+      </div>
+    </div>
+    <button class="save-btn upi" id="upiBtn" onclick="handleSave('upi')">💳 Save UPI Method</button>
+  </div>
 
-        // Real-time UPI validation
-        document.getElementById('upiId')?.addEventListener('input', function(e) {
-            const errorMsg = document.getElementById('upiError');
-            const upiPattern = /^[\w.-]+@[\w.-]+$/;
-            
-            if (this.value && !upiPattern.test(this.value)) {
-                errorMsg.textContent = '❌ Invalid UPI format (e.g., name@bank)';
-                errorMsg.className = 'validation-msg error-msg';
-            } else if (this.value) {
-                errorMsg.textContent = '✓ Valid UPI ID';
-                errorMsg.className = 'validation-msg success-msg';
-            } else {
-                errorMsg.textContent = '';
-            }
-        });
+  <!-- BANK PANEL -->
+  <div class="method-panel" id="panelBank">
+    <div class="info-banner bank">
+      <div class="info-ic">🏦</div>
+      <div class="info-txt">Enter your bank account details. Processing takes 1–3 business days.</div>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label class="fg-label" for="accountHolder">Account Holder Name</label>
+        <input class="fg-input" type="text" id="accountHolder" placeholder="Full name as per bank" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="fg-label" for="accountNumber">Account Number</label>
+        <input class="fg-input" type="number" id="accountNumber" placeholder="Enter account number" inputmode="numeric" oninput="validateAcc()">
+        <div class="field-hint" id="accHint">Minimum 9 digits</div>
+      </div>
+      <div class="form-group">
+        <label class="fg-label" for="ifscCode">IFSC Code</label>
+        <input class="fg-input" type="text" id="ifscCode" placeholder="SBIN0001234" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase();validateIfsc()">
+        <div class="field-hint" id="ifscHint">11-character bank code</div>
+      </div>
+      <div class="form-group">
+        <label class="fg-label" for="bankName">Bank Name</label>
+        <input class="fg-input" type="text" id="bankName" placeholder="e.g. State Bank of India">
+      </div>
+    </div>
+    <button class="save-btn bank" id="bankBtn" onclick="handleSave('bank')">🏦 Save Bank Method</button>
+  </div>
 
-        // Real-time account number validation
-        document.getElementById('accountNumber')?.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-            
-            const errorMsg = document.getElementById('accountError');
-            if (this.value.length > 0 && this.value.length < 9) {
-                errorMsg.textContent = '❌ Account number too short';
-                errorMsg.className = 'validation-msg error-msg';
-            } else if (this.value.length >= 9) {
-                errorMsg.textContent = '✓ Valid';
-                errorMsg.className = 'validation-msg success-msg';
-            } else {
-                errorMsg.textContent = '';
-            }
-        });
+  <!-- USDT PANEL -->
+  <div class="method-panel" id="panelUsdt">
+    <div class="info-banner usdt">
+      <div class="info-ic">₮</div>
+      <div class="info-txt">Enter your USDT wallet address. Make sure it matches the selected network to avoid loss of funds.</div>
+    </div>
+    <div class="form-card">
+      <div class="form-group">
+        <label class="fg-label" for="walletAddress">Wallet Address</label>
+        <input class="fg-input" type="text" id="walletAddress" placeholder="T... or 0x..." autocomplete="off" oninput="validateWallet()">
+        <div class="field-hint" id="walletHint">Minimum 34 characters</div>
+      </div>
+      <div class="form-group">
+        <label class="fg-label">Network</label>
+        <div class="network-row">
+          <button class="net-pill active" id="netTrc" onclick="setNet('TRC20',this)">TRC20</button>
+          <button class="net-pill" id="netErc" onclick="setNet('ERC20',this)">ERC20</button>
+          <button class="net-pill" id="netBep" onclick="setNet('BEP20',this)">BEP20</button>
+        </div>
+      </div>
+    </div>
+    <button class="save-btn usdt" id="usdtBtn" onclick="handleSave('usdt')">₮ Save USDT Method</button>
+  </div>
+</div>
 
-        // Real-time IFSC validation
-        document.getElementById('ifscCode')?.addEventListener('input', function(e) {
-            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            
-            const errorMsg = document.getElementById('ifscError');
-            const ifscPattern = /^[A-Z]{4}0[A-Z0-9]{6}$/;
-            
-            if (this.value && !ifscPattern.test(this.value)) {
-                errorMsg.textContent = '❌ Invalid IFSC (e.g., SBIN0001234)';
-                errorMsg.className = 'validation-msg error-msg';
-            } else if (this.value) {
-                errorMsg.textContent = '✓ Valid IFSC';
-                errorMsg.className = 'validation-msg success-msg';
-            } else {
-                errorMsg.textContent = '';
-            }
-        });
+<!-- SUCCESS SHEET -->
+<div class="sheet-ov" id="sheetOv">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-emoji">✅</div>
+    <div class="sheet-title">Method Saved!</div>
+    <div class="sheet-sub">Your withdrawal method has been configured.<br>You can now withdraw your winnings.</div>
+    <button class="sheet-btn" onclick="location.href='withdraw.html'">Go to Withdraw ›</button>
+  </div>
+</div>
 
-        // Real-time USDT address validation
-        document.getElementById('walletAddress')?.addEventListener('input', function(e) {
-            const errorMsg = document.getElementById('usdtError');
-            
-            if (this.value.length > 0 && this.value.length < 34) {
-                errorMsg.textContent = '❌ Invalid wallet address';
-                errorMsg.className = 'validation-msg error-msg';
-            } else if (this.value.length >= 34) {
-                errorMsg.textContent = '✓ Valid address';
-                errorMsg.className = 'validation-msg success-msg';
-            } else {
-                errorMsg.textContent = '';
-            }
-        });
+<div class="toast" id="toast"></div>
 
-        // Handle save
-        async function handleSave(e, method) {
-            e.preventDefault();
+<script>
+const API   = 'https://color-game-backend1.onrender.com';
+const token = localStorage.getItem('token');
+if (!token) location.href = 'index.html';
 
-            let details = {};
-            let btn;
+let selectedNet = 'TRC20';
+let activeTab   = 'upi';
 
-            if (method === 'upi') {
-                const upiId = document.getElementById('upiId').value.trim();
-                
-                if (!/^[\w.-]+@[\w.-]+$/.test(upiId)) {
-                    alert('❌ Please enter a valid UPI ID');
-                    return;
-                }
-                
-                details = { upiId };
-                btn = document.getElementById('upiBtn');
-                
-            } else if (method === 'bank') {
-                const accountHolder = document.getElementById('accountHolder').value.trim();
-                const accountNumber = document.getElementById('accountNumber').value.trim();
-                const ifscCode = document.getElementById('ifscCode').value.trim();
-                const bankName = document.getElementById('bankName').value.trim();
-                
-                if (accountNumber.length < 9) {
-                    alert('❌ Invalid account number');
-                    return;
-                }
-                
-                if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode)) {
-                    alert('❌ Invalid IFSC code');
-                    return;
-                }
-                
-                details = { accountHolder, accountNumber, ifscCode, bankName };
-                btn = document.getElementById('bankBtn');
-                
-            } else if (method === 'usdt') {
-                const walletAddress = document.getElementById('walletAddress').value.trim();
-                
-                if (walletAddress.length < 34) {
-                    alert('❌ Invalid USDT wallet address');
-                    return;
-                }
-                
-                details = { walletAddress, network: 'TRC20' };
-                btn = document.getElementById('usdtBtn');
-            }
+function toast(msg) {
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2800);
+}
 
-            // Disable button
-            btn.disabled = true;
-            btn.textContent = 'Saving...';
+function switchTab(tab) {
+  activeTab = tab;
+  // Update tab buttons
+  ['upi','bank','usdt'].forEach(t => {
+    document.getElementById('tab'+cap(t)).classList.toggle('active', t===tab);
+  });
+  // Show panels
+  ['panelUpi','panelBank','panelUsdt'].forEach(p => {
+    document.getElementById(p).classList.remove('active');
+  });
+  document.getElementById('panel'+cap(tab)).classList.add('active');
+}
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
-            try {
-                const token = localStorage.getItem('token');
-                
-                const res = await fetch(`${API}/withdraw/method`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ method, details })
-                });
+function setNet(net, el) {
+  selectedNet = net;
+  document.querySelectorAll('.net-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
 
-                const data = await res.json();
+// Validation helpers
+function setFieldState(inputId, hintId, ok, msg) {
+  const inp  = document.getElementById(inputId);
+  const hint = document.getElementById(hintId);
+  if (!inp.value) { inp.className='fg-input'; hint.className='field-hint'; hint.textContent=msg; return; }
+  inp.className  = 'fg-input ' + (ok ? 'ok' : 'err');
+  hint.className = 'field-hint ' + (ok ? 'ok' : 'err');
+  hint.textContent = ok ? '✓ Looks good' : '✕ ' + msg;
+}
 
-                if (res.ok) {
-                    alert('✅ Withdrawal method saved successfully!');
-                    
-                    // Redirect to withdraw page
-                    setTimeout(() => {
-                        window.location.href = 'withdraw.html';
-                    }, 1000);
-                } else {
-                    alert('❌ ' + (data.message || 'Failed to save method'));
-                    btn.disabled = false;
-                    btn.textContent = `Save ${method.toUpperCase()} Method`;
-                }
-            } catch (err) {
-                console.error('Save error:', err);
-                alert('❌ Network error. Please try again.');
-                btn.disabled = false;
-                btn.textContent = `Save ${method.toUpperCase()} Method`;
-            }
-        }
+function validateUpi() {
+  const v = document.getElementById('upiId').value.trim();
+  const ok = /^[\w.-]+@[\w.-]+$/.test(v);
+  setFieldState('upiId','upiHint', ok, 'Invalid UPI format (e.g., name@bank)');
+}
+function validateAcc() {
+  const v = document.getElementById('accountNumber').value.trim();
+  setFieldState('accountNumber','accHint', v.length >= 9, 'Minimum 9 digits required');
+}
+function validateIfsc() {
+  const v = document.getElementById('ifscCode').value.trim();
+  setFieldState('ifscCode','ifscHint', /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v), 'Invalid format (e.g., SBIN0001234)');
+}
+function validateWallet() {
+  const v = document.getElementById('walletAddress').value.trim();
+  setFieldState('walletAddress','walletHint', v.length >= 34, 'Address too short (min 34 chars)');
+}
 
-        // Load current method on page load
-        async function loadCurrentMethod() {
-            try {
-                const token = localStorage.getItem('token');
-                
-                const res = await fetch(`${API}/withdraw/method`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+// Load existing method
+async function loadExisting() {
+  try {
+    const res = await fetch(`${API}/withdraw/method`, { headers:{'Authorization':`Bearer ${token}`} });
+    if (!res.ok) return;
+    const d = await res.json();
+    if (!d.method) return;
 
-                const data = await res.json();
+    const card = document.getElementById('currentCard');
+    const ic   = document.getElementById('currentIc');
+    const val  = document.getElementById('currentVal');
 
-                if (res.ok && data.method) {
-                    const display = document.getElementById('currentMethodDisplay');
-                    const text = document.getElementById('currentMethodText');
-                    
-                    display.style.display = 'block';
-                    
-                    if (data.method === 'upi') {
-                        text.textContent = `UPI: ${data.details.upiId}`;
-                    } else if (data.method === 'bank') {
-                        text.textContent = `Bank: ${data.details.accountNumber} (${data.details.bankName})`;
-                    } else if (data.method === 'usdt') {
-                        text.textContent = `USDT: ${data.details.walletAddress.substring(0, 10)}...`;
-                    }
-                }
-            } catch (err) {
-                console.error('Load method error:', err);
-            }
-        }
+    card.classList.add('show');
+    if (d.method === 'upi') {
+      ic.textContent = '📱'; val.textContent = `UPI: ${d.details?.upiId}`;
+      document.getElementById('upiId').value = d.details?.upiId || '';
+    } else if (d.method === 'bank') {
+      ic.textContent = '🏦'; val.textContent = `Bank: ${d.details?.accountNumber}`;
+      document.getElementById('accountHolder').value = d.details?.accountHolder || '';
+      document.getElementById('accountNumber').value = d.details?.accountNumber || '';
+      document.getElementById('ifscCode').value = d.details?.ifscCode || '';
+      document.getElementById('bankName').value = d.details?.bankName || '';
+      switchTab('bank');
+    } else if (d.method === 'usdt') {
+      ic.textContent = '₮'; val.textContent = `USDT (${d.details?.network}): ${(d.details?.walletAddress||'').slice(0,16)}…`;
+      document.getElementById('walletAddress').value = d.details?.walletAddress || '';
+      switchTab('usdt');
+    }
+  } catch(e) { console.error(e); }
+}
 
-        // Check auth
-        if (!localStorage.getItem('token')) {
-            window.location.href = 'index.html';
-        } else {
-            loadCurrentMethod();
-        }
-    </script>
+async function handleSave(method) {
+  let details = {};
+  let btnId;
+
+  if (method === 'upi') {
+    const upiId = document.getElementById('upiId').value.trim();
+    if (!/^[\w.-]+@[\w.-]+$/.test(upiId)) { toast('⚠ Enter a valid UPI ID'); return; }
+    details = { upiId };
+    btnId   = 'upiBtn';
+
+  } else if (method === 'bank') {
+    const accountHolder = document.getElementById('accountHolder').value.trim();
+    const accountNumber = document.getElementById('accountNumber').value.trim();
+    const ifscCode      = document.getElementById('ifscCode').value.trim().toUpperCase();
+    const bankName      = document.getElementById('bankName').value.trim();
+    if (!accountHolder) { toast('⚠ Enter account holder name'); return; }
+    if (accountNumber.length < 9) { toast('⚠ Invalid account number'); return; }
+    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode)) { toast('⚠ Invalid IFSC code'); return; }
+    if (!bankName) { toast('⚠ Enter bank name'); return; }
+    details = { accountHolder, accountNumber, ifscCode, bankName };
+    btnId   = 'bankBtn';
+
+  } else if (method === 'usdt') {
+    const walletAddress = document.getElementById('walletAddress').value.trim();
+    if (walletAddress.length < 34) { toast('⚠ Invalid wallet address'); return; }
+    details = { walletAddress, network: selectedNet };
+    btnId   = 'usdtBtn';
+  }
+
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const res = await fetch(`${API}/withdraw/method`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
+      body: JSON.stringify({ method, details })
+    });
+    const d = await res.json();
+
+    if (res.ok) {
+      document.getElementById('sheetOv').classList.add('show');
+    } else {
+      toast('❌ ' + (d.error || d.message || 'Error saving method'));
+    }
+  } catch(e) { toast('❌ Network error. Try again.'); }
+
+  btn.disabled   = false;
+  const labels   = { upi:'💳 Save UPI Method', bank:'🏦 Save Bank Method', usdt:'₮ Save USDT Method' };
+  btn.textContent = labels[method];
+}
+
+loadExisting();
+</script>
 </body>
 </html>
