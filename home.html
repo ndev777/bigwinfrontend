@@ -1,909 +1,719 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>BIGWIN — Home</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --gold: #f5c842;
-      --gold2: #e8a800;
-      --green: #00d68f;
-      --green2: #00b377;
-      --red: #ff4757;
-      --bg: #08091a;
-      --bg2: #0d1128;
-      --bg3: #121835;
-      --card: rgba(255,255,255,0.04);
-      --card-border: rgba(255,255,255,0.08);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.5);
-      --muted2: rgba(255,255,255,0.3);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-      padding-bottom: 88px;
-      overflow-x: hidden;
-    }
-
-    /* ─── BG mesh ─── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(102,46,255,0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(0,214,143,0.12) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(245,200,66,0.05) 0%, transparent 60%);
-      pointer-events: none; z-index: 0;
-    }
-
-    .container {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 16px 16px 0;
-      position: relative; z-index: 1;
-    }
-
-    /* ─── HEADER ─── */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 20px;
-      margin-bottom: 14px;
-      backdrop-filter: blur(20px);
-      animation: slideDown 0.5s ease-out;
-    }
-
-    @keyframes slideDown {
-      from { opacity:0; transform:translateY(-16px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-
-    .logo-wrap { display:flex; align-items:center; gap:10px; }
-
-    .logo-icon {
-      width: 38px; height: 38px;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 4px 16px rgba(245,200,66,0.3);
-    }
-
-    .logo-text {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 26px; font-weight: 700;
-      background: linear-gradient(90deg, #fff 0%, var(--gold) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      letter-spacing: 2px;
-    }
-
-    .header-user { text-align: right; }
-
-    .user-mobile {
-      font-size: 11px; font-weight: 700;
-      color: var(--muted);
-      letter-spacing: 0.5px;
-    }
-
-    .user-code {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 15px; font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 1px;
-    }
-
-    /* ─── BANNER SLIDER ─── */
-    .banner-wrap {
-      border-radius: 20px;
-      overflow: hidden;
-      margin-bottom: 14px;
-      position: relative;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      animation: fadeUp 0.6s 0.1s ease-out both;
-    }
-
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(20px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-
-    /* Full image — 3:2 aspect ratio preserved */
-    .banner-track {
-      display: flex;
-      transition: transform 0.55s cubic-bezier(0.77,0,0.175,1);
-    }
-
-    .banner-slide {
-      min-width: 100%;
-      aspect-ratio: 3/2;
-    }
-
-    .banner-slide img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .banner-dots {
-      position: absolute;
-      bottom: 12px; left: 50%;
-      transform: translateX(-50%);
-      display: flex; gap: 6px;
-    }
-
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.35);
-      cursor: pointer;
-      transition: all 0.3s;
-      border: none;
-    }
-
-    .dot.active {
-      width: 22px;
-      border-radius: 4px;
-      background: var(--gold);
-    }
-
-    /* ─── SOCIAL LINKS ─── */
-    .socials {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-      animation: fadeUp 0.6s 0.2s ease-out both;
-    }
-
-    .social-btn {
-      display: flex; align-items: center; justify-content: center;
-      height: 52px;
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-      background: var(--card);
-      font-size: 22px;
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative; overflow: hidden;
-      text-decoration: none;
-    }
-
-    .social-btn::before {
-      content: '';
-      position: absolute; inset: 0;
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .social-btn:active { transform: scale(0.93); }
-
-    .social-btn.tg { border-color: rgba(0,136,204,0.3); }
-    .social-btn.tg::before { background: linear-gradient(135deg,rgba(0,136,204,0.3),transparent); }
-    .social-btn.wa { border-color: rgba(37,211,102,0.3); }
-    .social-btn.wa::before { background: linear-gradient(135deg,rgba(37,211,102,0.3),transparent); }
-    .social-btn.ig { border-color: rgba(214,41,118,0.3); }
-    .social-btn.ig::before { background: linear-gradient(135deg,rgba(214,41,118,0.3),transparent); }
-    .social-btn.yt { border-color: rgba(255,0,0,0.3); }
-    .social-btn.yt::before { background: linear-gradient(135deg,rgba(255,0,0,0.3),transparent); }
-    .social-btn:hover::before { opacity: 1; }
-
-    /* ─── BALANCE CARD ─── */
-    .balance-card {
-      border-radius: 24px;
-      background: linear-gradient(135deg, rgba(102,46,255,0.18) 0%, rgba(0,214,143,0.08) 100%);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 20px;
-      margin-bottom: 14px;
-      position: relative; overflow: hidden;
-      animation: fadeUp 0.6s 0.25s ease-out both;
-    }
-
-    .balance-card::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 180px; height: 180px;
-      background: radial-gradient(circle, rgba(245,200,66,0.15), transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .balance-top {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .balance-label {
-      font-size: 11px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 2px;
-      color: var(--muted);
-    }
-
-    .refresh-btn {
-      width: 34px; height: 34px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--muted);
-      font-size: 14px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.3s;
-    }
-
-    .refresh-btn:active { transform: rotate(180deg); background: rgba(255,255,255,0.12); }
-
-    .balance-amounts {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .amount-box {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 14px 16px;
-    }
-
-    .amount-lbl {
-      font-size: 11px; font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase; letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-
-    .amount-val {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 28px; font-weight: 700;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .amount-val span { color: var(--gold); font-size: 18px; }
-
-    .balance-btns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .bal-btn {
-      padding: 15px;
-      border-radius: 16px;
-      border: none;
-      font-family: 'Nunito', sans-serif;
-      font-size: 15px; font-weight: 800;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: all 0.25s;
-      letter-spacing: 0.3px;
-    }
-
-    .bal-btn:active { transform: scale(0.96); }
-
-    .btn-deposit {
-      background: linear-gradient(135deg, var(--green), var(--green2));
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(0,214,143,0.3);
-    }
-
-    .btn-withdraw {
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      color: #0d1128;
-      box-shadow: 0 6px 20px rgba(245,200,66,0.25);
-    }
-
-    /* ─── SECTION HEADER ─── */
-    .sec-hdr {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .sec-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 20px; font-weight: 700;
-      display: flex; align-items: center; gap: 8px;
-      letter-spacing: 0.5px;
-    }
-
-    .sec-title .dot-accent {
-      width: 6px; height: 6px;
-      background: var(--gold);
-      border-radius: 50%;
-    }
-
-    .sec-link {
-      font-size: 12px; font-weight: 700;
-      color: var(--gold);
-      text-decoration: none;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-    }
-
-    .sec-link:hover { opacity: 1; }
-
-    /* ─── TOURNAMENT CARDS ─── */
-    .tournaments-wrap {
-      margin-bottom: 16px;
-      animation: fadeUp 0.6s 0.3s ease-out both;
-    }
-
-    .t-card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative; overflow: hidden;
-    }
-
-    .t-card::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 3px;
-      background: linear-gradient(90deg, var(--gold), var(--green));
-    }
-
-    .t-card:active { transform: scale(0.985); }
-
-    .t-top {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 14px;
-    }
-
-    .t-name {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 19px; font-weight: 700;
-      margin-bottom: 3px;
-    }
-
-    .t-game {
-      font-size: 11px; font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase; letter-spacing: 1px;
-    }
-
-    .t-badge {
-      background: linear-gradient(135deg, var(--green), var(--green2));
-      color: #fff;
-      font-size: 10px; font-weight: 800;
-      padding: 5px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
-
-    .t-stats {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      gap: 8px; margin-bottom: 14px;
-    }
-
-    .t-stat {
-      text-align: center;
-      background: rgba(255,255,255,0.04);
-      border-radius: 12px;
-      padding: 10px 6px;
-    }
-
-    .t-stat-lbl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
-
-    .t-stat-val {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 16px; font-weight: 700;
-      color: #fff;
-    }
-
-    .t-stat-val.gold { color: var(--gold); }
-
-    .t-bottom {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .t-time { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
-
-    .join-btn {
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      color: #0d1128;
-      border: none;
-      border-radius: 12px;
-      padding: 8px 18px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 12px; font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .join-btn:active { transform: scale(0.95); }
-
-    .view-all {
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-      color: #fff;
-      font-family: 'Nunito', sans-serif;
-      font-size: 13px; font-weight: 800;
-      cursor: pointer;
-      letter-spacing: 0.3px;
-      transition: all 0.25s;
-    }
-
-    .view-all:active { background: rgba(255,255,255,0.08); }
-
-    /* ─── QUICK ACCESS ─── */
-    .quick-wrap {
-      display: grid; grid-template-columns: repeat(4,1fr);
-      gap: 10px; margin-bottom: 16px;
-      animation: fadeUp 0.6s 0.35s ease-out both;
-    }
-
-    .q-card {
-      background: var(--card);
-      border: 1px solid var(--card-border);
-      border-radius: 18px;
-      padding: 14px 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.25s;
-      text-decoration: none; color: var(--text);
-    }
-
-    .q-card:active { transform: scale(0.93); }
-
-    .q-icon {
-      width: 44px; height: 44px;
-      border-radius: 13px;
-      margin: 0 auto 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 21px;
-    }
-
-    .q-title { font-size: 11px; font-weight: 800; color: #fff; }
-    .q-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-    /* ─── GAMES GRID ─── */
-    .games-wrap {
-      margin-bottom: 16px;
-      animation: fadeUp 0.6s 0.4s ease-out both;
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .game-card {
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid var(--card-border);
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative;
-      background: var(--bg3);
-    }
-
-    .game-card:active { transform: scale(0.96); }
-
-    .game-img-wrap {
-      width: 100%;
-      aspect-ratio: 3/2;
-      overflow: hidden;
-    }
-
-    .game-img-wrap img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.4s;
-    }
-
-    .game-card:hover .game-img-wrap img { transform: scale(1.04); }
-
-    .game-img-placeholder {
-      width: 100%;
-      aspect-ratio: 3/2;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px;
-      opacity: 0.5;
-    }
-
-    .game-info {
-      padding: 12px 14px;
-    }
-
-    .game-name {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 16px; font-weight: 700;
-    }
-
-    .game-live {
-      font-size: 11px; font-weight: 700;
-      color: var(--green);
-      display: flex; align-items: center; gap: 4px;
-      margin-top: 2px;
-    }
-
-    .live-dot {
-      width: 6px; height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.7); }
-    }
-
-    .game-soon {
-      font-size: 11px; color: var(--muted2);
-      margin-top: 2px; font-weight: 700;
-    }
-
-    .game-hot-badge {
-      position: absolute;
-      top: 10px; right: 10px;
-      background: linear-gradient(135deg,#ff4757,#c0392b);
-      color: #fff;
-      font-size: 10px; font-weight: 800;
-      padding: 4px 10px; border-radius: 20px;
-      letter-spacing: 0.5px;
-    }
-
-    .game-card.coming { opacity: 0.55; cursor: default; pointer-events: none; }
-
-    /* ─── BOTTOM NAV ─── */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(8,9,26,0.96);
-      backdrop-filter: blur(24px);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      padding: 10px 0 14px;
-      z-index: 100;
-    }
-
-    .nav-item {
-      flex: 1;
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      color: var(--muted2);
-      text-decoration: none;
-      transition: all 0.25s;
-      padding: 6px 0;
-    }
-
-    .nav-item.active { color: var(--gold); }
-
-    .nav-icon {
-      font-size: 22px;
-      transition: transform 0.25s;
-    }
-
-    .nav-item.active .nav-icon { transform: scale(1.15); }
-
-    .nav-label { font-size: 10px; font-weight: 800; letter-spacing: 0.3px; }
-
-    /* ─── EMPTY/LOADING ─── */
-    .empty-state {
-      text-align: center; padding: 32px 16px;
-      color: var(--muted);
-    }
-
-    .empty-state div { font-size: 36px; margin-bottom: 10px; opacity: 0.4; }
-    .empty-state p { font-size: 13px; font-weight: 600; }
-
-    .spinner {
-      width: 28px; height: 28px;
-      border: 3px solid rgba(255,255,255,0.1);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 30px auto;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ─── NOTICE TICKER ─── */
-    .notice-bar {
-      background: rgba(245,200,66,0.08);
-      border: 1px solid rgba(245,200,66,0.2);
-      border-radius: 14px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-      display: flex; align-items: center; gap: 10px;
-      overflow: hidden;
-      animation: fadeUp 0.6s 0.15s ease-out both;
-    }
-
-    .notice-icon { font-size: 16px; flex-shrink: 0; }
-
-    .notice-text {
-      font-size: 12px; font-weight: 700;
-      color: rgba(245,200,66,0.9);
-      white-space: nowrap;
-      animation: ticker 18s linear infinite;
-    }
-
-    @keyframes ticker {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-60%); }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>BIGWIN — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0b0c17;
+  --card:     rgba(255,255,255,0.07);
+  --card2:    rgba(255,255,255,0.04);
+  --glass:    rgba(255,255,255,0.09);
+  --border:   rgba(255,255,255,0.10);
+  --border2:  rgba(255,255,255,0.06);
+  --txt:      #f2f2f7;
+  --txt2:     rgba(242,242,247,0.55);
+  --txt3:     rgba(242,242,247,0.30);
+  --green:    #34c759;
+  --green-bg: rgba(52,199,89,0.12);
+  --green-bd: rgba(52,199,89,0.28);
+  --blue:     #007aff;
+  --blue-bg:  rgba(0,122,255,0.12);
+  --gold:     #ffd60a;
+  --gold-bg:  rgba(255,214,10,0.10);
+  --gold-bd:  rgba(255,214,10,0.28);
+  --red:      #ff3b5c;
+  --red-bg:   rgba(255,59,92,0.12);
+  --purple:   #af52de;
+  --purple-bg:rgba(175,82,222,0.12);
+  --orange:   #ff9f0a;
+  --safe-top: env(safe-area-inset-top, 44px);
+  --safe-bot: env(safe-area-inset-bottom, 34px);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-font-smoothing:antialiased; }
+
+body {
+  font-family:'Nunito Sans',sans-serif;
+  background:var(--bg); color:var(--txt);
+  min-height:100dvh; overflow-x:hidden;
+  padding-bottom:calc(90px + var(--safe-bot));
+}
+
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 40% at 30% 0%, rgba(175,82,222,.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 80% 80%, rgba(52,199,89,.06) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 30% at 10% 60%, rgba(0,122,255,.05) 0%, transparent 55%);
+}
+
+.wrap { max-width:430px; margin:0 auto; padding:0 16px; position:relative; z-index:1; }
+.safe-top { height:calc(var(--safe-top) + 6px); }
+
+/* ── TOP HEADER ── */
+.top-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:6px 0 16px;
+}
+.logo-grp { display:flex; align-items:center; gap:10px; }
+.logo-icon {
+  width:40px; height:40px; border-radius:13px;
+  background:linear-gradient(135deg,#ff9f0a,#ff6b35);
+  display:grid; place-items:center; font-size:20px;
+  box-shadow:0 4px 14px rgba(255,159,10,.35);
+}
+.logo-name {
+  font-family:'Nunito',sans-serif;
+  font-size:22px; font-weight:900; letter-spacing:-.3px;
+}
+.logo-name span { color:var(--orange); }
+
+.hdr-right { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+.hdr-mobile {
+  font-family:'Nunito',sans-serif;
+  font-size:13px; font-weight:900; color:var(--txt);
+}
+.hdr-code {
+  font-family:'Nunito',sans-serif;
+  font-size:11px; font-weight:800; color:var(--gold);
+  letter-spacing:.5px;
+}
+
+/* ── BANNER SLIDER ── */
+.banner-wrap {
+  border-radius:24px; overflow:hidden; margin-bottom:12px;
+  position:relative;
+  box-shadow:0 12px 40px rgba(0,0,0,.4);
+}
+.banner-overflow { overflow:hidden; border-radius:24px; }
+.banner-track { display:flex; transition:transform .45s cubic-bezier(.4,0,.2,1); }
+.banner-slide { min-width:100%; aspect-ratio:16/7; background:#1a1a2e; position:relative; overflow:hidden; }
+.banner-slide img { width:100%; height:100%; object-fit:cover; display:block; }
+
+/* Placeholder banners when images not loaded */
+.banner-slide.b1 { background:linear-gradient(135deg,#1a0a2e,#2d1060,#1a0a40); }
+.banner-slide.b2 { background:linear-gradient(135deg,#0a1a2e,#102860,#0a1a40); }
+.banner-slide.b3 { background:linear-gradient(135deg,#0a2e0a,#106030,#0a2e20); }
+.banner-slide.b4 { background:linear-gradient(135deg,#2e0a0a,#601020,#2e0a10); }
+
+.banner-placeholder {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; padding:20px;
+}
+.bp-live {
+  background:var(--red); color:#fff;
+  font-family:'Nunito',sans-serif; font-size:11px; font-weight:900;
+  padding:4px 12px; border-radius:8px; letter-spacing:1px;
+  margin-bottom:8px; display:inline-flex; align-items:center; gap:5px;
+}
+.bp-title { font-family:'Nunito',sans-serif; font-size:26px; font-weight:900; color:#fff; line-height:1.2; margin-bottom:6px; }
+.bp-title span { color:var(--gold); }
+.bp-sub { font-size:13px; font-weight:700; color:rgba(255,255,255,.7); margin-bottom:12px; }
+.bp-cta {
+  background:linear-gradient(135deg,var(--gold),#e8a800);
+  color:#000; font-family:'Nunito',sans-serif; font-size:15px; font-weight:900;
+  padding:10px 24px; border-radius:20px; border:none; cursor:pointer;
+  box-shadow:0 6px 20px rgba(255,214,10,.4);
+}
+
+.banner-dots {
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  display:flex; gap:6px; z-index:10;
+}
+.dot {
+  width:6px; height:6px; border-radius:3px;
+  background:rgba(255,255,255,.35); transition:all .3s; cursor:pointer;
+}
+.dot.active { width:20px; background:#fff; }
+
+/* SWIPE ARROWS */
+.banner-prev, .banner-next {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(0,0,0,.4); backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  display:grid; place-items:center; cursor:pointer;
+  font-size:16px; color:#fff; z-index:10; transition:all .2s;
+}
+.banner-prev { left:10px; }
+.banner-next { right:10px; }
+.banner-prev:active, .banner-next:active { transform:translateY(-50%) scale(.88); }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:16px; overflow:hidden; margin-bottom:14px;
+  display:flex; align-items:center;
+}
+.ticker-tag {
+  background:var(--orange); color:#000;
+  padding:8px 12px; font-size:10px; font-weight:900;
+  text-transform:uppercase; letter-spacing:.5px;
+  flex-shrink:0; white-space:nowrap;
+}
+.ticker-overflow { overflow:hidden; flex:1; }
+.ticker-text {
+  display:inline-block; white-space:nowrap; padding:8px 12px;
+  font-size:12px; font-weight:700; color:var(--txt2);
+  animation:ticker 22s linear infinite;
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-100%)} }
+
+/* ── SOCIAL QUICK LINKS ── */
+.social-row {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+  margin-bottom:14px;
+}
+.soc-btn {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:18px; padding:14px 8px;
+  text-decoration:none; transition:all .18s;
+  cursor:pointer; backdrop-filter:blur(10px);
+}
+.soc-btn:active { transform:scale(.9); }
+.soc-icon {
+  width:42px; height:42px; border-radius:14px;
+  display:grid; place-items:center; font-size:20px;
+}
+.soc-btn.tg .soc-icon { background:rgba(0,136,204,.15); border:1px solid rgba(0,136,204,.3); }
+.soc-btn.wa .soc-icon { background:rgba(37,211,102,.15); border:1px solid rgba(37,211,102,.3); }
+.soc-btn.ig .soc-icon { background:rgba(214,41,118,.15); border:1px solid rgba(214,41,118,.3); }
+.soc-btn.yt .soc-icon { background:rgba(255,0,0,.12); border:1px solid rgba(255,0,0,.25); }
+.soc-lbl { font-size:10px; font-weight:800; color:var(--txt3); letter-spacing:.3px; text-align:center; }
+
+/* ── BALANCE CARD ── */
+.bal-card {
+  background:linear-gradient(145deg,#0d1628,#0a1220,#08101e);
+  border:1px solid rgba(0,122,255,.22);
+  border-radius:28px; padding:20px;
+  margin-bottom:14px;
+  position:relative; overflow:hidden;
+  box-shadow:0 14px 50px rgba(0,0,0,.4), 0 0 0 1px rgba(0,122,255,.07) inset;
+}
+.bal-card::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle,rgba(0,122,255,.1) 0%,transparent 65%);
+  pointer-events:none;
+}
+.bal-card::after {
+  content:''; position:absolute; bottom:-40px; left:-30px;
+  width:160px; height:160px; border-radius:50%;
+  background:radial-gradient(circle,rgba(52,199,89,.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.bal-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:14px;
+}
+.bal-lbl { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--txt3); }
+.bal-refresh {
+  width:30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,.07); border:1px solid var(--border2);
+  display:grid; place-items:center; font-size:14px;
+  cursor:pointer; transition:all .2s;
+}
+.bal-refresh:active { transform:rotate(180deg) scale(.88); }
+
+.bal-amounts {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;
+}
+.bal-box {
+  background:rgba(255,255,255,.05); border:1px solid var(--border2);
+  border-radius:18px; padding:14px;
+}
+.bal-box-lbl { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--txt3); margin-bottom:6px; }
+.bal-box-val {
+  font-family:'Nunito',sans-serif;
+  font-size:24px; font-weight:900; letter-spacing:-.5px;
+}
+.bal-box-val.w { color:var(--blue); }
+.bal-box-val.b { color:var(--gold); }
+.bal-box-hint { font-size:10px; color:var(--txt3); font-weight:600; margin-top:4px; }
+
+.bal-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.bal-btn {
+  padding:15px; border:none; border-radius:18px; cursor:pointer;
+  font-family:'Nunito',sans-serif; font-size:16px; font-weight:900;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:all .15s;
+}
+.bal-btn:active { transform:scale(.94); }
+.bal-btn.dep { background:linear-gradient(135deg,#34c759,#1a9e3f); color:#fff; box-shadow:0 8px 24px rgba(52,199,89,.3); }
+.bal-btn.wit { background:linear-gradient(135deg,#ff3b5c,#c8102e); color:#fff; box-shadow:0 8px 24px rgba(255,59,92,.25); }
+
+/* ── SECTION HEADER ── */
+.sec-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px; padding-top:4px;
+}
+.sec-title {
+  display:flex; align-items:center; gap:8px;
+  font-family:'Nunito',sans-serif; font-size:17px; font-weight:900;
+}
+.sec-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.sec-link {
+  font-size:13px; font-weight:800; color:var(--blue);
+  text-decoration:none; transition:opacity .15s;
+}
+.sec-link:active { opacity:.6; }
+
+/* ── TOURNAMENT CARDS ── */
+.t-list { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.t-card {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:22px; padding:16px;
+  cursor:pointer; transition:all .2s;
+  backdrop-filter:blur(10px); overflow:hidden;
+  position:relative;
+}
+.t-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--gold),var(--orange),transparent);
+}
+.t-card:active { transform:scale(.98); background:var(--glass); }
+
+.t-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.t-name { font-family:'Nunito',sans-serif; font-size:16px; font-weight:900; margin-bottom:3px; }
+.t-game { font-size:12px; color:var(--txt3); font-weight:700; }
+.t-badge {
+  background:var(--green-bg); border:1px solid var(--green-bd);
+  color:var(--green); font-size:10px; font-weight:900;
+  padding:4px 10px; border-radius:10px; letter-spacing:.5px;
+  flex-shrink:0; white-space:nowrap;
+}
+
+.t-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+.t-stat { text-align:center; }
+.t-stat-lbl { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:var(--txt3); margin-bottom:3px; }
+.t-stat-val { font-family:'Nunito',sans-serif; font-size:15px; font-weight:900; color:var(--txt); }
+.t-stat-val.gold { color:var(--gold); }
+
+.t-bottom { display:flex; align-items:center; justify-content:space-between; }
+.t-time { font-size:12px; color:var(--txt3); font-weight:700; }
+.join-btn {
+  padding:9px 20px; border:none; border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),#e8a800);
+  color:#000; font-family:'Nunito',sans-serif;
+  font-size:13px; font-weight:900; cursor:pointer;
+  box-shadow:0 4px 14px rgba(255,214,10,.3); transition:all .15s;
+}
+.join-btn:active { transform:scale(.92); }
+
+.t-empty {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:22px; padding:40px 20px; text-align:center;
+  color:var(--txt3); margin-bottom:14px;
+}
+.t-empty-ic { font-size:40px; opacity:.3; margin-bottom:10px; }
+.t-spinner {
+  width:36px; height:36px; border-radius:50%;
+  border:3px solid rgba(255,255,255,.08);
+  border-top-color:var(--gold); animation:spin .8s linear infinite;
+  margin:40px auto;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── QUICK ACCESS GRID ── */
+.quick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+.q-card {
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:20px; padding:14px 8px;
+  text-decoration:none; transition:all .18s; cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+.q-card:active { transform:scale(.9); background:var(--glass); }
+.q-icon {
+  width:42px; height:42px; border-radius:14px;
+  display:grid; place-items:center; font-size:19px;
+}
+.q-title { font-size:11px; font-weight:800; color:var(--txt); text-align:center; }
+.q-sub { font-size:9px; font-weight:700; color:var(--txt3); text-align:center; }
+
+/* ── GAMES SECTION ── */
+.games-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px; }
+.game-card {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:20px; overflow:hidden; cursor:pointer;
+  transition:all .2s; position:relative;
+  aspect-ratio:4/3;
+  backdrop-filter:blur(10px);
+}
+.game-card:active { transform:scale(.95); }
+.game-card.active-game { border-color:rgba(52,199,89,.3); }
+.game-card.active-game::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(0deg,rgba(0,0,0,.6) 0%,transparent 50%);
+}
+.game-img-wrap { position:absolute; inset:0; }
+.game-img-wrap img { width:100%; height:100%; object-fit:cover; }
+.game-img-placeholder {
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-size:48px; background:rgba(255,255,255,.03);
+}
+.game-info {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:10px 12px; z-index:2;
+  background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,transparent 100%);
+}
+.game-name { font-family:'Nunito',sans-serif; font-size:14px; font-weight:900; }
+.game-live {
+  display:flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:800; color:var(--green); margin-top:2px;
+}
+.game-live-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:pulse 1.5s infinite; }
+.game-soon { font-size:10px; font-weight:700; color:var(--txt3); margin-top:2px; }
+.game-hot-badge {
+  position:absolute; top:8px; right:8px; z-index:2;
+  background:var(--red); color:#fff;
+  font-size:9px; font-weight:900; padding:3px 8px; border-radius:8px;
+  letter-spacing:.5px;
+}
+.game-coming-overlay {
+  position:absolute; inset:0; background:rgba(0,0,0,.5);
+  display:grid; place-items:center; z-index:1;
+}
+.game-coming-badge {
+  background:rgba(255,255,255,.1); border:1px solid var(--border);
+  color:var(--txt3); font-size:10px; font-weight:800;
+  padding:4px 10px; border-radius:10px; backdrop-filter:blur(10px);
+}
+
+/* ── VIEW ALL BTN ── */
+.view-all-btn {
+  width:100%; padding:15px; border:1px solid var(--border);
+  background:var(--card2); border-radius:18px; cursor:pointer;
+  font-family:'Nunito',sans-serif; font-size:15px; font-weight:800;
+  color:var(--txt2); transition:all .15s; margin-bottom:14px;
+}
+.view-all-btn:active { background:var(--glass); color:var(--txt); }
+
+/* ── BOTTOM NAV ── */
+.bot-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  background:rgba(11,12,23,.9);
+  backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+  border-top:1px solid var(--border2);
+  padding:8px 0 calc(8px + var(--safe-bot));
+  display:flex; z-index:100;
+}
+.nav-a { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; color:var(--txt3); transition:all .2s; padding:4px 0; }
+.nav-a.active { color:var(--blue); }
+.nav-ic { font-size:22px; transition:transform .2s; }
+.nav-a.active .nav-ic { transform:scale(1.15); }
+.nav-lb { font-size:10px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; }
+
+/* ── PULSE ── */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+</style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
+  <div class="safe-top"></div>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo-wrap">
-      <div class="logo-icon">🏆</div>
-      <div class="logo-text">BIGWIN</div>
+  <!-- TOP HEADER -->
+  <div class="top-hdr">
+    <div class="logo-grp">
+      <div class="logo-icon">🎯</div>
+      <div class="logo-name">BIG<span>WIN</span></div>
     </div>
-    <div class="header-user">
-      <div class="user-mobile" id="userMobile">Loading...</div>
-      <div class="user-code" id="userCode">—</div>
+    <div class="hdr-right">
+      <div class="hdr-mobile" id="userMobile">Loading…</div>
+      <div class="hdr-code" id="userCode">—</div>
     </div>
   </div>
 
-  <!-- BANNER SLIDER — full aspect ratio, no cropping -->
+  <!-- BANNER SLIDER -->
   <div class="banner-wrap">
-    <div class="banner-track" id="bannerTrack">
-      <div class="banner-slide"><img src="images/banner-slide slide-1.png" alt="Banner 1" loading="eager"></div>
-      <div class="banner-slide"><img src="images/banner-slide slide-2.png" alt="Banner 2"></div>
-      <div class="banner-slide"><img src="images/banner-slide slide-3.png" alt="Banner 3"></div>
-      <div class="banner-slide"><img src="images/banner-slide slide-4.png" alt="Banner 4"></div>
+    <div class="banner-overflow">
+      <div class="banner-track" id="bannerTrack">
+
+        <!-- SLIDE 1 — Tournaments Live -->
+        <div class="banner-slide b1">
+          <img src="images/banner-slide slide-1.png" alt="Banner 1" onerror="this.style.display='none'">
+          <div class="banner-placeholder">
+            <div class="bp-live">🔴 LIVE</div>
+            <div class="bp-title">Tournaments<br><span>Live!</span></div>
+            <div class="bp-sub">Free Fire • ₹8 Per Kill • Join Now</div>
+            <button class="bp-cta" onclick="location.href='tournaments.html'">Join Now →</button>
+          </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="banner-slide b2">
+          <img src="images/banner-slide slide-2.png" alt="Banner 2" onerror="this.style.display='none'">
+          <div class="banner-placeholder">
+            <div class="bp-live">💰 DEPOSIT</div>
+            <div class="bp-title">Min Deposit<br><span>₹50 Only</span></div>
+            <div class="bp-sub">Instant withdrawals available 24/7</div>
+            <button class="bp-cta" onclick="location.href='deposit.html'">Deposit Now →</button>
+          </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="banner-slide b3">
+          <img src="images/banner-slide slide-3.png" alt="Banner 3" onerror="this.style.display='none'">
+          <div class="banner-placeholder">
+            <div class="bp-live">🎮 PLAY</div>
+            <div class="bp-title">Color Game<br><span>Win 1.96×</span></div>
+            <div class="bp-sub">Bet Red or Green — Live every minute!</div>
+            <button class="bp-cta" onclick="location.href='game.html'">Play Now →</button>
+          </div>
+        </div>
+
+        <!-- SLIDE 4 -->
+        <div class="banner-slide b4">
+          <img src="images/banner-slide slide-4.png" alt="Banner 4" onerror="this.style.display='none'">
+          <div class="banner-placeholder">
+            <div class="bp-live">🎁 REFERRAL</div>
+            <div class="bp-title">Invite Friends<br><span>Earn ₹</span></div>
+            <div class="bp-sub">0.1% commission across 6 levels deep</div>
+            <button class="bp-cta" onclick="location.href='referral.html'">Invite Now →</button>
+          </div>
+        </div>
+
+      </div>
     </div>
+    <button class="banner-prev" onclick="prevSlide()">‹</button>
+    <button class="banner-next" onclick="nextSlide()">›</button>
     <div class="banner-dots" id="bannerDots">
-      <button class="dot active" onclick="goToSlide(0)"></button>
-      <button class="dot" onclick="goToSlide(1)"></button>
-      <button class="dot" onclick="goToSlide(2)"></button>
-      <button class="dot" onclick="goToSlide(3)"></button>
+      <div class="dot active" onclick="goToSlide(0)"></div>
+      <div class="dot" onclick="goToSlide(1)"></div>
+      <div class="dot" onclick="goToSlide(2)"></div>
+      <div class="dot" onclick="goToSlide(3)"></div>
     </div>
   </div>
 
-  <!-- NOTICE BAR -->
-  <div class="notice-bar">
-    <span class="notice-icon">📢</span>
-    <div class="notice-text">🎉 Welcome to BIGWIN! &nbsp;•&nbsp; Minimum deposit ₹50 &nbsp;•&nbsp; Instant withdrawals 24/7 &nbsp;•&nbsp; Join tournaments & win big! &nbsp;•&nbsp; New tournaments added daily 🏆</div>
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-tag">🔴 LIVE</div>
+    <div class="ticker-overflow">
+      <div class="ticker-text">🎉 Welcome to BIGWIN! &nbsp;•&nbsp; Minimum deposit ₹50 &nbsp;•&nbsp; Instant withdrawals 24/7 &nbsp;•&nbsp; Join tournaments & win big! &nbsp;•&nbsp; New tournaments added daily 🏆 &nbsp;•&nbsp; Color Game live every minute &nbsp;•&nbsp; Refer friends & earn 0.1% commission &nbsp;•&nbsp;</div>
+    </div>
   </div>
 
   <!-- SOCIAL LINKS -->
-  <div class="socials">
-    <a class="social-btn tg" href="https://t.me/BigwinOfficialVip1" target="_blank">📱</a>
-    <a class="social-btn wa" href="https://wa.me/YOUR_NUMBER" target="_blank">💬</a>
-    <a class="social-btn ig" href="https://instagram.com/bigwin77" target="_blank">📸</a>
-    <a class="social-btn yt" href="https://youtube.com/@bigwin77" target="_blank">▶️</a>
+  <div class="social-row">
+    <a class="soc-btn tg" href="https://t.me/BigwinOfficialVip1" target="_blank">
+      <div class="soc-icon">📱</div>
+      <div class="soc-lbl">Telegram</div>
+    </a>
+    <a class="soc-btn wa" href="https://wa.me/YOUR_NUMBER" target="_blank">
+      <div class="soc-icon">💬</div>
+      <div class="soc-lbl">WhatsApp</div>
+    </a>
+    <a class="soc-btn ig" href="https://instagram.com/bigwin77" target="_blank">
+      <div class="soc-icon">📸</div>
+      <div class="soc-lbl">Instagram</div>
+    </a>
+    <a class="soc-btn yt" href="https://youtube.com/@bigwin77" target="_blank">
+      <div class="soc-icon">▶️</div>
+      <div class="soc-lbl">YouTube</div>
+    </a>
   </div>
 
   <!-- BALANCE CARD -->
-  <div class="balance-card">
-    <div class="balance-top">
-      <div class="balance-label">My Balance</div>
-      <button class="refresh-btn" onclick="loadUserProfile()">↻</button>
+  <div class="bal-card">
+    <div class="bal-hdr">
+      <div class="bal-lbl">My Balance</div>
+      <div class="bal-refresh" onclick="loadUserProfile()">⟳</div>
     </div>
-    <div class="balance-amounts">
-      <div class="amount-box">
-        <div class="amount-lbl">Wallet</div>
-        <div class="amount-val"><span>₹</span><span id="walletBal">0.00</span></div>
+    <div class="bal-amounts">
+      <div class="bal-box">
+        <div class="bal-box-lbl">Wallet</div>
+        <div class="bal-box-val w">₹<span id="walletBal">0.00</span></div>
+        <div class="bal-box-hint">✓ Withdrawable</div>
       </div>
-      <div class="amount-box">
-        <div class="amount-lbl">Bonus</div>
-        <div class="amount-val"><span>₹</span><span id="bonusBal">0.00</span></div>
+      <div class="bal-box">
+        <div class="bal-box-lbl">Bonus</div>
+        <div class="bal-box-val b">₹<span id="bonusBal">0.00</span></div>
+        <div class="bal-box-hint">⚡ Games only</div>
       </div>
     </div>
-    <div class="balance-btns">
-      <button class="bal-btn btn-deposit" onclick="location.href='deposit.html'">＋ Deposit</button>
-      <button class="bal-btn btn-withdraw" onclick="location.href='withdraw.html'">↑ Withdraw</button>
+    <div class="bal-actions">
+      <button class="bal-btn dep" onclick="location.href='deposit.html'">💳 Deposit</button>
+      <button class="bal-btn wit" onclick="location.href='withdraw.html'">💸 Withdraw</button>
     </div>
-  </div>
-
-  <!-- FEATURED TOURNAMENTS -->
-  <div class="tournaments-wrap">
-    <div class="sec-hdr">
-      <div class="sec-title"><div class="dot-accent"></div>Tournaments</div>
-      <a class="sec-link" href="tournaments.html">View All →</a>
-    </div>
-    <div id="tournamentsContainer"><div class="spinner"></div></div>
   </div>
 
   <!-- QUICK ACCESS -->
-  <div class="quick-wrap">
+  <div class="quick-grid">
     <a class="q-card" href="referral.html">
-      <div class="q-icon" style="background:linear-gradient(135deg,rgba(102,46,255,0.3),rgba(102,46,255,0.1));border:1px solid rgba(102,46,255,0.3)">👥</div>
+      <div class="q-icon" style="background:var(--purple-bg);border:1px solid rgba(175,82,222,.25)">👥</div>
       <div class="q-title">Referral</div>
       <div class="q-sub">Invite & Earn</div>
     </a>
     <a class="q-card" href="Giftcodes.html">
-      <div class="q-icon" style="background:linear-gradient(135deg,rgba(0,214,143,0.3),rgba(0,214,143,0.1));border:1px solid rgba(0,214,143,0.3)">🎁</div>
+      <div class="q-icon" style="background:var(--green-bg);border:1px solid var(--green-bd)">🎁</div>
       <div class="q-title">Gift Codes</div>
       <div class="q-sub">Redeem Now</div>
     </a>
-    <a class="q-card" href="wallet-history.html">
-      <div class="q-icon" style="background:linear-gradient(135deg,rgba(245,200,66,0.3),rgba(245,200,66,0.1));border:1px solid rgba(245,200,66,0.3)">📜</div>
+    <a class="q-card" href="wallet.html">
+      <div class="q-icon" style="background:var(--gold-bg);border:1px solid var(--gold-bd)">📜</div>
       <div class="q-title">History</div>
       <div class="q-sub">Transactions</div>
     </a>
     <a class="q-card" href="my-tournaments.html">
-      <div class="q-icon" style="background:linear-gradient(135deg,rgba(255,71,87,0.3),rgba(255,71,87,0.1));border:1px solid rgba(255,71,87,0.3)">🥇</div>
+      <div class="q-icon" style="background:var(--red-bg);border:1px solid rgba(255,59,92,.25)">🥇</div>
       <div class="q-title">My Events</div>
       <div class="q-sub">Joined</div>
     </a>
   </div>
 
-  <!-- GAMES SECTION -->
-  <div class="games-wrap">
-    <div class="sec-hdr">
-      <div class="sec-title"><div class="dot-accent"></div>Play Games</div>
+  <!-- TOURNAMENTS -->
+  <div class="sec-hdr">
+    <div class="sec-title"><div class="sec-dot" style="background:var(--gold)"></div>Live Tournaments</div>
+    <a class="sec-link" href="tournaments.html">View All ›</a>
+  </div>
+  <div id="tournamentsContainer">
+    <div class="t-empty"><div class="t-spinner"></div></div>
+  </div>
+
+  <!-- GAMES -->
+  <div class="sec-hdr">
+    <div class="sec-title"><div class="sec-dot" style="background:var(--green)"></div>Play Games</div>
+  </div>
+  <div class="games-grid">
+    <div class="game-card active-game" onclick="location.href='game.html'">
+      <div class="game-img-wrap"><img src="images/color-game.png" alt="Color Game" onerror="this.style.display='none'"></div>
+      <div class="game-img-placeholder" style="font-size:56px">🎨</div>
+      <div class="game-hot-badge">🔥 HOT</div>
+      <div class="game-info">
+        <div class="game-name">Color Game</div>
+        <div class="game-live"><div class="game-live-dot"></div>Live Now</div>
+      </div>
     </div>
-    <div class="games-grid">
-      <div class="game-card" onclick="location.href='game.html'">
-        <div class="game-img-wrap">
-          <img src="images/color-game.png" alt="Color Game">
-        </div>
-        <div class="game-hot-badge">🔥 HOT</div>
-        <div class="game-info">
-          <div class="game-name">Color Game</div>
-          <div class="game-live"><div class="live-dot"></div> Live Now</div>
-        </div>
-      </div>
-      <div class="game-card coming">
-        <div class="game-img-placeholder">🎯</div>
-        <div class="game-info">
-          <div class="game-name">Dice Game</div>
-          <div class="game-soon">Coming Soon</div>
-        </div>
-      </div>
-      <div class="game-card coming">
-        <div class="game-img-placeholder">🃏</div>
-        <div class="game-info">
-          <div class="game-name">Card Game</div>
-          <div class="game-soon">Coming Soon</div>
-        </div>
-      </div>
-      <div class="game-card coming">
-        <div class="game-img-placeholder">🎰</div>
-        <div class="game-info">
-          <div class="game-name">Slots</div>
-          <div class="game-soon">Coming Soon</div>
-        </div>
-      </div>
+    <div class="game-card" style="cursor:default">
+      <div class="game-img-placeholder">🎯</div>
+      <div class="game-coming-overlay"><div class="game-coming-badge">Coming Soon</div></div>
+      <div class="game-info"><div class="game-name">Dice Game</div><div class="game-soon">Coming Soon</div></div>
+    </div>
+    <div class="game-card" style="cursor:default">
+      <div class="game-img-placeholder">🃏</div>
+      <div class="game-coming-overlay"><div class="game-coming-badge">Coming Soon</div></div>
+      <div class="game-info"><div class="game-name">Card Game</div><div class="game-soon">Coming Soon</div></div>
+    </div>
+    <div class="game-card" style="cursor:default">
+      <div class="game-img-placeholder">🎰</div>
+      <div class="game-coming-overlay"><div class="game-coming-badge">Coming Soon</div></div>
+      <div class="game-info"><div class="game-name">Slots</div><div class="game-soon">Coming Soon</div></div>
     </div>
   </div>
 
-</div><!-- /container -->
+</div><!-- /wrap -->
 
 <!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <a href="home.html" class="nav-item active">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-label">Home</div>
-  </a>
-  <a href="tournaments.html" class="nav-item">
-    <div class="nav-icon">🏆</div>
-    <div class="nav-label">Tournaments</div>
-  </a>
-  <a href="wallet.html" class="nav-item">
-    <div class="nav-icon">💰</div>
-    <div class="nav-label">Wallet</div>
-  </a>
-  <a href="profile.html" class="nav-item">
-    <div class="nav-icon">👤</div>
-    <div class="nav-label">Profile</div>
-  </a>
+<nav class="bot-nav">
+  <a href="home.html"        class="nav-a active"><div class="nav-ic">🏠</div><div class="nav-lb">Home</div></a>
+  <a href="tournaments.html" class="nav-a"><div class="nav-ic">🏆</div><div class="nav-lb">Tournaments</div></a>
+  <a href="wallet.html"      class="nav-a"><div class="nav-ic">💰</div><div class="nav-lb">Wallet</div></a>
+  <a href="profile.html"     class="nav-a"><div class="nav-ic">👤</div><div class="nav-lb">Profile</div></a>
 </nav>
 
 <script>
-  const API = 'https://color-game-backend1.onrender.com';
-  let slide = 0, timer;
-  const SLIDES = 4;
+const API   = 'https://color-game-backend1.onrender.com';
+const token = localStorage.getItem('token');
+if (!token) location.href = 'index.html';
 
-  if (!localStorage.getItem('token')) location.href = 'index.html';
+/* ── SLIDER ── */
+let slide = 0, sliderTimer;
+const SLIDES = 4;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    loadUserProfile();
-    loadFeaturedTournaments();
-    startSlider();
-  });
+function goToSlide(i) {
+  slide = i;
+  document.getElementById('bannerTrack').style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll('.dot').forEach((d,idx) => d.classList.toggle('active', idx===i));
+  clearInterval(sliderTimer);
+  sliderTimer = setInterval(() => goToSlide((slide+1)%SLIDES), 4000);
+}
+function prevSlide() { goToSlide((slide - 1 + SLIDES) % SLIDES); }
+function nextSlide() { goToSlide((slide + 1) % SLIDES); }
 
-  // ─── SLIDER ───
-  function startSlider() {
-    clearInterval(timer);
-    timer = setInterval(() => goToSlide((slide + 1) % SLIDES), 3500);
-  }
+// Touch swipe support
+let touchStartX = 0;
+document.querySelector('.banner-wrap').addEventListener('touchstart', e => touchStartX=e.changedTouches[0].clientX, {passive:true});
+document.querySelector('.banner-wrap').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) dx < 0 ? nextSlide() : prevSlide();
+}, {passive:true});
 
-  function goToSlide(i) {
-    slide = i;
-    document.getElementById('bannerTrack').style.transform = `translateX(-${i * 100}%)`;
-    document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
-    startSlider();
-  }
+sliderTimer = setInterval(() => goToSlide((slide+1)%SLIDES), 4000);
 
-  // ─── PROFILE ───
-  async function loadUserProfile() {
-    try {
-      const res = await fetch(`${API}/profile`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (!res.ok) return;
-      const d = await res.json();
-      document.getElementById('userMobile').textContent = d.mobile || '—';
-      document.getElementById('userCode').textContent = d.referralCode || d.userCode || '—';
-      document.getElementById('walletBal').textContent = (d.wallet || 0).toFixed(2);
-      document.getElementById('bonusBal').textContent = (d.bonus || 0).toFixed(2);
-    } catch(e) {}
-  }
+/* ── PROFILE ── */
+async function loadUserProfile() {
+  try {
+    const res = await fetch(`${API}/profile`, { headers:{'Authorization':`Bearer ${token}`} });
+    if (!res.ok) { if(res.status===401){localStorage.removeItem('token');location.href='index.html';} return; }
+    const d = await res.json();
+    document.getElementById('userMobile').textContent = d.mobile || '—';
+    document.getElementById('userCode').textContent   = d.referralCode || d.userCode || '—';
+    document.getElementById('walletBal').textContent  = parseFloat(d.wallet||0).toFixed(2);
+    document.getElementById('bonusBal').textContent   = parseFloat(d.bonus||0).toFixed(2);
+  } catch(e) {}
+}
 
-  // ─── TOURNAMENTS ───
-  async function loadFeaturedTournaments() {
-    try {
-      const res = await fetch(`${API}/tournaments?status=registration_open`);
-      const data = await res.json();
-      const list = Array.isArray(data) ? data : (data.tournaments || []);
-      const el = document.getElementById('tournamentsContainer');
+/* ── TOURNAMENTS ── */
+async function loadFeaturedTournaments() {
+  try {
+    const res  = await fetch(`${API}/tournaments?status=registration_open`);
+    const data = await res.json();
+    const list = Array.isArray(data) ? data : (data.tournaments || []);
+    const el   = document.getElementById('tournamentsContainer');
 
-      if (!list.length) {
-        el.innerHTML = '<div class="empty-state"><div>🏆</div><p>No open tournaments right now</p></div>';
-        return;
-      }
-
-      el.innerHTML = list.slice(0,3).map(t => {
-        const d = new Date(t.startTime);
-        const timeStr = isNaN(d) ? '—' : d.toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
-        const slots = `${t.currentParticipants||0}/${t.totalSlots||'∞'}`;
-        return `<div class="t-card" onclick="location.href='tournament-details.html?id=${t._id}'">
-          <div class="t-top">
-            <div>
-              <div class="t-name">${t.title}</div>
-              <div class="t-game">${t.game || ''} ${t.type ? '· '+t.type : ''}</div>
-            </div>
-            <div class="t-badge">✓ OPEN</div>
-          </div>
-          <div class="t-stats">
-            <div class="t-stat">
-              <div class="t-stat-lbl">Entry</div>
-              <div class="t-stat-val">₹${t.entryFee||0}</div>
-            </div>
-            <div class="t-stat">
-              <div class="t-stat-lbl">Prize Pool</div>
-              <div class="t-stat-val gold">₹${t.prizePool||0}</div>
-            </div>
-            <div class="t-stat">
-              <div class="t-stat-lbl">Slots</div>
-              <div class="t-stat-val">${slots}</div>
-            </div>
-          </div>
-          <div class="t-bottom">
-            <div class="t-time">🕐 ${timeStr}</div>
-            <button class="join-btn">Join Now</button>
-          </div>
-        </div>`;
-      }).join('') + `<button class="view-all" onclick="location.href='tournaments.html'">View All Tournaments</button>`;
-    } catch(e) {
-      document.getElementById('tournamentsContainer').innerHTML =
-        '<div class="empty-state"><div>⚠️</div><p>Could not load tournaments</p></div>';
+    if (!list.length) {
+      el.innerHTML = '<div class="t-empty"><div class="t-empty-ic">🏆</div><div style="font-size:13px;font-weight:700">No open tournaments right now</div></div>';
+      return;
     }
+
+    el.innerHTML = list.slice(0,3).map(t => {
+      const d = new Date(t.startTime);
+      const timeStr = isNaN(d) ? '—' : d.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      const slots = `${t.currentParticipants||0}/${t.totalSlots||'∞'}`;
+      return `<div class="t-card" onclick="location.href='tournament-details.html?id=${t._id}'">
+        <div class="t-top">
+          <div>
+            <div class="t-name">${t.title||'Tournament'}</div>
+            <div class="t-game">${t.game||''} ${t.type?'· '+t.type:''}</div>
+          </div>
+          <div class="t-badge">✓ OPEN</div>
+        </div>
+        <div class="t-stats">
+          <div class="t-stat">
+            <div class="t-stat-lbl">Entry</div>
+            <div class="t-stat-val">₹${t.entryFee||0}</div>
+          </div>
+          <div class="t-stat">
+            <div class="t-stat-lbl">Prize Pool</div>
+            <div class="t-stat-val gold">₹${t.prizePool||0}</div>
+          </div>
+          <div class="t-stat">
+            <div class="t-stat-lbl">Slots</div>
+            <div class="t-stat-val">${slots}</div>
+          </div>
+        </div>
+        <div class="t-bottom">
+          <div class="t-time">🕐 ${timeStr}</div>
+          <button class="join-btn" onclick="event.stopPropagation();location.href='tournament-details.html?id=${t._id}'">Join Now</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    el.innerHTML += `<button class="view-all-btn" onclick="location.href='tournaments.html'">View All Tournaments ›</button>`;
+  } catch(e) {
+    document.getElementById('tournamentsContainer').innerHTML =
+      '<div class="t-empty"><div class="t-empty-ic">⚠️</div><div style="font-size:13px;font-weight:700">Could not load tournaments</div></div>';
   }
+}
+
+loadUserProfile();
+loadFeaturedTournaments();
 </script>
 </body>
 </html>
